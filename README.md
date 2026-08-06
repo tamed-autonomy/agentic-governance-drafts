@@ -46,19 +46,20 @@ place that can be evaluated on its own terms. It has not yet been discussed with
 **It should not be published, filed, or circulated beyond this repository until that conversation
 happens.** Its own Section 8 says the same.
 
-## What has been done to these
+## How these are built
 
-- **Prior-art surveyed** across IETF, OpenID Foundation, NIST, CSA, adjacent protocols, and the academic
-  literature — including the deontic logic, normative-multi-agent-systems, and goal-recognition work that
-  most directly anticipates this. Findings live in the source repository, not here.
-- **Adversarially reviewed twice** for cross-document coherence. Both passes found real contradictions;
-  both sets were fixed.
-- **Reused rather than reinvented** wherever an existing standard covers the need — W3C Trace Context for
-  record correlation, OpenID Federation and RFC 9728 for discovery and keys, SCIM for enumeration, Shared
-  Signals for change propagation. Several mechanisms were deleted from these drafts on discovering they
-  already existed elsewhere.
-- **Trimmed.** Four speculative features were cut rather than shipped hopefully. Each removal is recorded
-  as a struck-through Open Item with its reasoning.
+- **They name their ancestors.** Every draft carries a Relationship to Prior Work section, because the
+  argument is not that this is a new idea. Prior art was surveyed across IETF, OpenID Foundation, NIST,
+  CSA, adjacent protocols, and the academic literature; the surveys live in the source repository.
+- **They profile rather than restate.** Where a finished specification covers a need, these drafts cite
+  it instead of defining their own: W3C Trace Context for record correlation, OpenID Federation and
+  RFC 9728 for discovery and keys, SCIM for enumeration semantics, Shared Signals for change
+  propagation.
+- **They record their own soft ground.** Each draft ends with Open Items — including struck-through
+  entries for decisions already made, with the reasoning that settled them.
+- **Shared vocabulary is shared, not duplicated.** The decision values, the artifact state vocabulary,
+  and the attenuation predicate registry each have exactly one owning document. `make check` enforces
+  that every cross-reference resolves.
 
 ## What is deliberately *not* claimed
 
@@ -68,8 +69,11 @@ These drafts try hard not to overclaim, because the literature is full of govern
   against an adversary — there are constructions giving a guaranteed degree of goal ambiguity even when
   the agent's algorithm is fully known to the observer. What is specified is *falsification with
   attributable violation*.
-- **Trust is not portable as a score.** No symmetric reputation function is sybilproof. Observations are
-  portable; the judgment is local.
+- **Trust does not travel as a reputation score.** No symmetric reputation function over third-party
+  reports is sybilproof, so no observation carries one. What does travel is a named observer's
+  measurement of what a subject itself earned, on that observer's stated scale — evidence a relying party
+  weighs, never a conclusion it inherits. Magnitudes from different observers are not comparable and must
+  not be combined.
 - **Revocation is not solved.** No delegated-capability system has solved it. These drafts require only
   that a deployment declare which trade-off it took.
 - **Nothing here is a ledger.** Signed, hash-linked, append-only records held by the parties that produce
@@ -81,8 +85,12 @@ Every draft ends with an **Open Items** section listing what its author already 
 Starting there is the fastest way to find the soft ground.
 
 The most useful review is the kind that says *this is already solved by X* or *this will not deploy
-because Y*. Several mechanisms have already been deleted from these drafts on exactly that basis, and
-the drafts are better for it.
+because Y*. Several mechanisms have already been removed from these drafts on exactly that basis, and
+they are better for it.
+
+Two adversarial passes for cross-document coherence have already been run, so contradictions between
+drafts are less likely than gaps within one. `CONTRIBUTING.md` lists what is already known to be
+unresolved.
 
 ## Building
 
