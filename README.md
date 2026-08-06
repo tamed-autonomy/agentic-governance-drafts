@@ -3,8 +3,9 @@
 Working copies of seven Internet-Drafts specifying interchange formats for the governance of autonomous
 AI agents — the layer above identity and authorization, not a replacement for either.
 
-**Status: pre-submission.** Nothing here has been filed with the IETF Datatracker. This repository exists
-so that a small number of people can argue with the drafts before that happens.
+**Status: pre-submission.** Nothing here has been filed with the IETF Datatracker, and this work is not
+being publicised yet. The repository is open so that the drafts can be read and argued with before they
+are submitted — not because they are finished.
 
 ---
 
@@ -65,9 +66,14 @@ published under Apache License 2.0. It is not my specification and this document
 it.
 
 That document exists so the other six need *no* KTP dependency at all — the binding is isolated in one
-place that can be evaluated on its own terms. It has not yet been discussed with its subject's author.
-**It should not be published, filed, or circulated beyond this repository until that conversation
-happens.** Its own Section 8 says the same.
+place, which can be evaluated on its own terms and discarded without touching anything else.
+
+**It has not yet been discussed with Chris Perkins, and it will not be filed with the IETF until it
+has.** Its own Section 8 says the same, and names the preferred outcomes in order: co-authorship,
+contribution to the KTP document set directly, or independent publication with KTP as a normative
+reference. Read it as one author's reading of someone else's specification, not as anything Perkins has
+reviewed or endorsed — and note that its central argument depends on a claim about how `E_base` is
+earned that is flagged in its own Open Items as needing his confirmation.
 
 ## How these are built
 

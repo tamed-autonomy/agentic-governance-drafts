@@ -1,7 +1,8 @@
 # Reviewing and contributing
 
-This repository is circulated privately for critique before anything is filed with the IETF. If you have
-access to it, you were asked to argue with it.
+These drafts are pre-submission. The repository is public so they can be read and argued with before
+anything is filed with the IETF, but the work is not being publicised yet and the drafts should be
+treated as working copies rather than proposals anyone has signed off.
 
 ## The most useful kinds of review
 
@@ -33,8 +34,9 @@ Please don't spend review time on these — they are recorded and being worked:
 - IANA sections have registration templates but have not been through a designated-expert review.
 - `draft-martherus-claim-resolution` may not warrant being a separate document; its own Open Item 5 asks
   the question.
-- `draft-martherus-ktp-profile` has not been discussed with the author of the specification it profiles.
-  See its Section 8 and the README.
+- `draft-martherus-ktp-profile` has not been discussed with Chris Perkins, whose specification it
+  profiles. See its Section 8 and the README. If you are reading this because you *are* Chris Perkins:
+  Section 8 lists the preferred outcomes, and Open Item 2 is the claim I most need checked.
 - Several prior-art characterizations derive from a survey rather than a direct read, and are flagged
   individually.
 
