@@ -34,9 +34,9 @@ Please don't spend review time on these — they are recorded and being worked:
 - IANA sections have registration templates but have not been through a designated-expert review.
 - `draft-martherus-claim-resolution` may not warrant being a separate document; its own Open Item 5 asks
   the question.
-- `draft-martherus-ktp-profile` has not been discussed with Chris Perkins, whose specification it
-  profiles. See its Section 8 and the README. If you are reading this because you *are* Chris Perkins:
-  Section 8 lists the preferred outcomes, and Open Item 2 is the claim I most need checked.
+- `draft-martherus-ktp-profile` profiles Chris Perkins' Kinetic Trust Protocol, shared with attribution
+  by mutual agreement. Its Section 4.4 argument rests on a claim about how `E_base` is derived that only
+  he can confirm — Open Item 2. That is the single most useful thing anyone could check.
 - Several prior-art characterizations derive from a survey rather than a direct read, and are flagged
   individually.
 

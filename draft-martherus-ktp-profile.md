@@ -305,11 +305,17 @@ Response Alliance, published under the Apache License, Version 2.0 at
 This document profiles that work. It claims no authorship of it, and nothing here should be read as
 specifying, extending, or revising KTP itself.
 
-**Before submission:** the author of this document intends to contact Chris Perkins. Preferred outcomes,
-in order: co-authorship of this profile; contribution of the profile to the KTP document set directly; or
-publication as an independent profile with KTP as a normative reference and explicit acknowledgment.
-Filing without that contact is not appropriate for a document whose subject is another author's
-specification.
+KTP is shared here with attribution by mutual agreement between its author and the author of this
+document. Apache 2.0 governs the specification itself; this profile adds nothing to and subtracts nothing
+from those terms.
+
+**What remains outstanding is technical, not permissive.** Section 4.4 argues that the sybilproofness
+result does not apply to `E_base`, and that argument rests on how KTP derives the resilience component —
+a fact about KTP that only its author can settle. If it is wrong, Section 4.4 and the `earned_standing`
+mapping in Section 4.1 are both wrong with it. See Open Item 2.
+
+Co-authorship of this profile, or contribution of it to the KTP document set directly, remain open and
+would both be preferable to independent publication. Neither is a precondition for it existing.
 
 # Open Items
 

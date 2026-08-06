@@ -61,19 +61,18 @@ existing specification already covers a need it is profiled rather than restated
 ### ⚠️ On the KTP profile
 
 `draft-martherus-ktp-profile.md` profiles the [Kinetic Trust Protocol](https://nmcitra.github.io/ktp-rfc/),
-which is the work of **Chris Perkins** (New Mexico Cyber Intelligence & Threat Response Alliance),
-published under Apache License 2.0. It is not my specification and this document claims no authorship of
-it.
+the work of **Chris Perkins** (New Mexico Cyber Intelligence & Threat Response Alliance), published under
+Apache License 2.0 and shared here with attribution by mutual agreement. It is not my specification and
+this document claims no authorship of it.
 
-That document exists so the other six need *no* KTP dependency at all — the binding is isolated in one
-place, which can be evaluated on its own terms and discarded without touching anything else.
+It exists so the other six need *no* KTP dependency at all — the binding is isolated in one place, which
+can be evaluated on its own terms and discarded without touching anything else.
 
-**It has not yet been discussed with Chris Perkins, and it will not be filed with the IETF until it
-has.** Its own Section 8 says the same, and names the preferred outcomes in order: co-authorship,
-contribution to the KTP document set directly, or independent publication with KTP as a normative
-reference. Read it as one author's reading of someone else's specification, not as anything Perkins has
-reviewed or endorsed — and note that its central argument depends on a claim about how `E_base` is
-earned that is flagged in its own Open Items as needing his confirmation.
+**One open question is load-bearing.** Section 4.4 argues that the sybilproofness result does not apply
+to `E_base`, and that turns on how KTP derives its resilience component — a fact about KTP only its
+author can settle. If it is wrong, both that section and the `earned_standing` mapping go with it. Read
+the profile as one author's reading of someone else's specification, not as anything Perkins has
+reviewed.
 
 ## How these are built
 
