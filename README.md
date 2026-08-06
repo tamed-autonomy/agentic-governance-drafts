@@ -22,6 +22,47 @@ the late 1990s, and AgenticRei made the argument again in June 2026. What is mis
 **interoperability layer**: signed, portable, cross-domain carriage of constructs that already have
 reasoners. Every draft here says so in its Relationship to Prior Work section.
 
+## The architecture
+
+The floor is finished and deployed. It answers **who** an agent is and **can** it perform an operation.
+It does not answer **why** the agent is acting or whether it **should** act now — and nothing standard
+sits in that gap, so every vendor fills it privately and no two fill it the same way.
+
+```mermaid
+%%{init: {'flowchart': {'wrappingWidth': 900}}}%%
+flowchart TB
+    Q["<b>Should this action happen?</b><br/><i>this actor · this purpose · this context · right now</i>"]
+
+    M["<b>THE MIDDLE BAND — no shared standard today</b><br/><br/><b>why</b> · intent-scope · authority-attenuation<br/><b>should</b> · normative-constraint<br/><b>character</b> · trust-observation · claim-resolution<br/><b>composition</b> · layer-handoff"]
+
+    F["<b>THE FLOOR — finished standards, reused not replaced</b><br/><br/><b>who</b> · OAuth · OIDC · SPIFFE/SPIRE · SCIM · OpenID Federation<br/><b>can</b> · AuthZEN 1.0 · RAR · token exchange<br/><b>carriage</b> · JOSE/COSE · JWK · RFC 9728 · Trace Context · Shared Signals"]
+
+    Q --> M --> F
+
+    style Q fill:#fffbe6,stroke:#8a6d00,stroke-width:2px
+    style M fill:#eaf2ff,stroke:#1a5fb4,stroke-width:2px
+    style F fill:#f2f2f2,stroke:#666,stroke-width:1px
+```
+
+An agent can satisfy every check on the floor and still be the wrong actor, for the wrong purpose, at the
+wrong moment. That is not a defect in the floor — it is a question the floor was never designed to
+answer.
+
+### Each draft rests on something finished
+
+The middle band is unspecified, not unsupported. Every draft names what it builds on, and where an
+existing specification already covers a need it is profiled rather than restated.
+
+| Draft | Rests on |
+|---|---|
+| normative-constraint | AuthZEN 1.0 §5.5.1 (fills its declared obligations placeholder) · Shared Signals · JOSE/COSE · Trace Context |
+| layer-handoff | AuthZEN Access Evaluations API · the decision registry from normative-constraint |
+| trust-observation | RATS (RFC 9334) for attestation results · JOSE/COSE |
+| intent-scope | OAuth RAR (RFC 9396) · token exchange (RFC 8693) · Trace Context |
+| authority-attenuation | token exchange (RFC 8693) · the macaroon lineage · JOSE/COSE |
+| claim-resolution | OpenID Federation 1.0 · RFC 9728 · JWK (RFC 7517) · SCIM query semantics |
+| ktp-profile | Kinetic Trust Protocol — third-party, see below |
+
 ## The drafts
 
 | Draft | Subject | Maturity |
