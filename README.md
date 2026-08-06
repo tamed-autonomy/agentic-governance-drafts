@@ -68,11 +68,17 @@ this document claims no authorship of it.
 It exists so the other six need *no* KTP dependency at all — the binding is isolated in one place, which
 can be evaluated on its own terms and discarded without touching anything else.
 
-**One open question is load-bearing.** Section 4.4 argues that the sybilproofness result does not apply
-to `E_base`, and that turns on how KTP derives its resilience component — a fact about KTP only its
-author can settle. If it is wrong, both that section and the `earned_standing` mapping go with it. Read
-the profile as one author's reading of someone else's specification, not as anything Perkins has
-reviewed.
+Every structural claim in it has been checked against the authoritative `rfcs-txt/` sources rather than
+the rendered documentation — record fields, `sequence` semantics, the Trust Proof claim set, the
+Sponsorship Bond members, the tier thresholds. Those all held.
+
+**One substantive claim did not.** Section 4.4 originally argued that the sybilproofness result does not
+apply to `E_base` at all. KTP-Core §5.5.5 says peer signals SHOULD contribute 10–20% of it, so part of
+`E_base` *is* within the class that result addresses. Section 4.4 now claims only what survives, and
+raises two questions for the specification's author: where the peer-signal contribution is seated, given
+§5.1's formula already sums to 1.00, and whether sponsor reputation is double-counted between the two
+sections. Read the profile as one author's reading of someone else's specification, not as anything
+Perkins has reviewed.
 
 ## How these are built
 

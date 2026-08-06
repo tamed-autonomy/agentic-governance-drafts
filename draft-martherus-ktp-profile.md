@@ -216,25 +216,56 @@ how much the oracle is trusted.
 That is precisely the division {{I-D.martherus-trust-observation}} Section 6.3 requires: evidence
 travels, judgment stays local.
 
-## Why the sybilproofness result does not bite
+## How far the sybilproofness argument actually goes
 
 {{I-D.martherus-trust-observation}} Section 3 forbids an observation carrying a value derived from other
 parties' reports about the subject, because no symmetric reputation function over such reports is
-sybilproof.
+sybilproof. `E_base` is **mostly** outside that prohibition, and the qualifier is load-bearing.
 
-`E_base` is not such a function. Its dominant component is proof of resilience — standing earned by the
-agent itself surviving adversarial conditions — with a bounded contribution from a sponsor who stakes
-something at cost. A manufactured identity inherits none of it and begins at zero. Creating a thousand
-agents costs a thousand times as much, which is dues-paying, not a sybil advantage.
+{{KTP-CORE}} Section 5.1 defines:
 
-Two residual concerns are real and are handled elsewhere. An oracle that inflates `e_base` is an
-issuer-trust failure, addressed by the relying party's accepted-observer set
-({{I-D.martherus-trust-observation}} Section 6.1), not by this argument. And the sponsor component is
-relational rather than self-earned — it is bounded within the model, and a deployment that raised it
-substantially would weaken the reasoning here.
+~~~
+E_base = (PoR_score * 0.70) + (Lineage_cap * 0.20) + (Sponsor_contribution * 0.10)
 
-Whether the resilience component is entirely self-earned in every KTP profile **is an open item**
-(Section 9); the argument in this section depends on it.
+  PoR_score            = f(transaction_count, crisis_ratio, max_friction)
+  Lineage_cap          = min(generation * 15, 100)
+  Sponsor_contribution = Sponsor_E_base * stake_percentage
+~~~
+
+The 70% term is a measurement of the subject's own activity and survival, and the 20% term is structural.
+Crisis attestations that raise it require an Oracle signature and a zone-wide crisis, so an agent cannot
+manufacture its own adversity. That much is genuinely self-earned, and a fabricated identity inherits
+none of it.
+
+**But {{KTP-CORE}} Section 5.5.5 goes further than the formula above.** Under GOODHART-004, *"E_base
+calculation SHOULD incorporate peer signals that the agent cannot directly control"* — co-transaction
+success rate, sponsor reputation, zone endorsements, negative attestations — at a stated weight of
+*"10-20% of E_base."*
+
+Those are reports by other parties about the subject. Where a deployment implements GOODHART-004, some of
+`E_base` **is** within the class the impossibility result addresses, and this profile does not claim
+otherwise.
+
+KTP's own defence is that the signals are chosen for non-manufacturability by the subject: an agent
+cannot compel others to transact with it, cannot compel a sponsor to stake on it, and cannot forge a zone
+endorsement. That is a real and well-aimed mitigation. It is not the same property as sybil resistance,
+which concerns an adversary controlling *multiple* identities rather than a single agent inflating its
+own — a colluding population can transact successfully among itself.
+
+**What this profile therefore claims, and no more:**
+
+- `E_base` is predominantly self-earned and is defensible as `earned_standing` under
+  {{I-D.martherus-trust-observation}} Section 5.7.
+- A relying party **MUST NOT** treat `E_base` as sybil-resistant in the sense the impossibility result
+  concerns. It is evidence weighed against the observer's method, not a conclusion inherited.
+- A deployment implementing GOODHART-004 **SHOULD** state the peer-signal weight it applies, since the
+  strength of the above depends on it. At the upper bound of the stated range, combined with the 10%
+  sponsor term, up to 30% of `E_base` is relational rather than self-earned.
+
+Two further items are noted for the specification's author rather than resolved here. The Section 5.1
+formula sums to 1.00 with no term for peer signals, so it is not evident where the Section 5.5.5
+contribution is seated. And "sponsor reputation" appears both as a peer signal in 5.5.5 and as the
+separate 10% Sponsor Weight in 5.1, which may be double-counted. See Section 9.
 
 ## Newcomer distrust
 
@@ -319,15 +350,21 @@ would both be preferable to independent publication. Neither is a precondition f
 
 # Open Items
 
-1. **Verify every structural claim against the KTP full text.** This profile was written against the
-   rendered documentation pages, not the authoritative specifications in the repository's `rfcs-txt/`
-   directory. Field names, the `sequence` semantics asserted in Section 3.1, the Trust Proof claim set in
-   Section 4, and the Sponsorship Bond members in Section 5 all require confirmation against the source.
-2. **Confirm whether `E_base`'s resilience component is entirely self-earned.** Section 4.4's argument
-   that the sybilproofness result does not apply depends on it. If any part of it aggregates reports from
-   other identities rather than measuring the agent's own survival, the argument fails and both that
-   section and the `earned_standing` mapping in Section 4.1 need rewriting. Confirm also the proportions
-   — the argument tolerates a bounded sponsor contribution and would not survive an unbounded one.
+1. ~~Verify every structural claim against the KTP full text~~ — **done.** Checked against
+   `rfcs-txt/ktp-core.txt`, `ktp-identity.txt` and `ktp-enforce.txt`. Confirmed: the trajectory-record
+   fields; `sequence(N) == sequence(N-1) + 1` over *all* transaction records, which is what Section 3.1
+   rests on; the Trust Proof claim set; the Sponsorship Bond members (`bond_id`, `sponsor_id`,
+   `sponsored_id`, `stake_percentage`, `stake_amount`), `sponsored_E_base = stake_amount * 0.5`, and the
+   stake-decay relation; and the tier thresholds 95/85/70/50. No structural corrections were needed.
+2. ~~Confirm whether `E_base`'s resilience component is entirely self-earned~~ — **answered, and the
+   answer was partly no.** {{KTP-CORE}} Section 5.1's three terms are self-earned or structural, but
+   Section 5.5.5 (GOODHART-004) states that peer signals SHOULD contribute 10-20% of `E_base`. Section
+   4.4 has been rewritten to claim only what survives that. Two questions remain **for the specification's
+   author**:
+   (a) Section 5.1's formula sums to 1.00 with no peer-signal term — where is the Section 5.5.5
+   contribution seated, and does it displace the others or extend beyond them?
+   (b) "Sponsor reputation" is a peer signal in 5.5.5 and also the separate 10% Sponsor Weight in 5.1.
+   Is that double-counted?
 3. **Determine the normative reference status KTP can actually carry.** As a specification published
    outside a recognized standards body, it may constitute a downward reference requiring justification.
    That question belongs to this document alone — which is why this document exists.
