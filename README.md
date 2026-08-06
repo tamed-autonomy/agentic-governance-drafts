@@ -93,12 +93,17 @@ make            # build all drafts to .xml and .txt
 make clean
 ```
 
-Requires `kramdown-rfc` and `xml2rfc`:
+Requires Ruby 3.2+ (`kramdown-rfc`) and Python (`xml2rfc`):
 
 ```
+brew install ruby                 # system Ruby 2.6 is too old
 gem install kramdown-rfc
-pip install xml2rfc
+python3 -m venv .venv-build && .venv-build/bin/pip install xml2rfc
 ```
+
+Source layout follows kramdown-rfc conventions: the title comes from the YAML front matter, and
+`--- abstract` / `--- middle` / `--- back` delimit the document parts. Section numbers are generated,
+not written — headings use `#` for a major section and `##` below it.
 
 ## License
 

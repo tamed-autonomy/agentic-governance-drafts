@@ -131,6 +131,9 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
+
+--- abstract
+
 Authorization systems for autonomous agents answer whether an actor is permitted to perform an action.
 They do not carry the obligations and prohibitions that a relying party requires to be evaluated
 alongside that permission — trading blackout windows, litigation holds, employment status, clinical
@@ -143,6 +146,8 @@ wire between systems that already have their own.
 
 Composition of this engine's decisions with those of other, independent enforcement points is a separate
 problem and is not specified here.
+
+--- middle
 
 # Introduction
 
@@ -784,3 +789,5 @@ Items requiring resolution before submission:
    not contradict them.
 6. Reconcile with the reference implementation, which currently implements the structured condition form
    only and does not implement `reevaluation_triggers`.
+
+--- back

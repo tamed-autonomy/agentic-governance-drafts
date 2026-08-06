@@ -47,6 +47,9 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
+
+--- abstract
+
 Authorization for autonomous agents is increasingly evaluated by more than one specialized component:
 identity, behavioral analysis, declared-purpose scope, trust history, and contextual constraint each
 reach independent conclusions about the same proposed action. No specification defines how those
@@ -55,6 +58,8 @@ conclusions combine, in what order, with what authority, or how the composed out
 This document defines a composition protocol for independent policy enforcement points. It specifies the
 decision contributions a participant may make, how contributions compose, and the record that attests
 the composed outcome. It does not define any participant's internal logic.
+
+--- middle
 
 # Introduction
 
@@ -414,3 +419,5 @@ whether extending the existing description would serve as well.
    termination guarantee, for a benefit no deployment had asked for. If participants later prove they
    need to see each other's annotations before contributing, it returns as an extension with the
    single-round case unchanged.
+
+--- back

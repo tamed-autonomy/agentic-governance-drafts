@@ -47,6 +47,9 @@ informative:
   RFC7033:
   RFC8414:
 ---
+
+--- abstract
+
 An agent's identifier is issued by one authority. The facts a relying party needs about that agent —
 what it was deployed to do, how it has behaved, what authority it holds — originate with several, and
 change on different schedules than the identifier does.
@@ -56,6 +59,8 @@ and are finished specifications. This document does not redefine them. It profil
 governance and specifies only what they do not cover: how a role-specific issuer identifier is resolved,
 how long verification keys must outlive the claims they signed, and what a relying party does when
 issuers disagree.
+
+--- middle
 
 # Introduction
 
@@ -332,3 +337,5 @@ Section 3 are drawn from the companion specifications that define them.
 5. This document is now short. Reconsider whether Sections 3, 4, and 6 are better placed as sections
    within the three companion specifications, eliminating it entirely. The argument for keeping it is
    that all three deltas are cross-cutting and would otherwise be stated three times.
+
+--- back

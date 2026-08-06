@@ -50,12 +50,17 @@ normative:
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-enforce/
     date: 2026
 ---
+
+--- abstract
+
 This document profiles the Kinetic Trust Protocol (KTP) as a trust and delegation-chain substrate for two
 companion specifications: authority attenuation predicates and portable trust observations.
 
 It exists so that those specifications need not depend on KTP. Each stands alone with no KTP reference of
 any kind. A deployment that has chosen KTP uses this profile to bind them together; a deployment that has
 not is unaffected.
+
+--- middle
 
 # Introduction
 
@@ -287,3 +292,5 @@ specification.
 # IANA Considerations
 
 This document requests no IANA actions. It profiles existing registries and defines no new values.
+
+--- back

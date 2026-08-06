@@ -53,6 +53,9 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
+
+--- abstract
+
 An access token states what an agent may do. It does not state what the agent is doing it *for*. Where a
 single credential authorizes a broad class of operations, actions that are individually permitted may
 collectively serve a purpose no one authorized.
@@ -66,6 +69,8 @@ This document does **not** define intent verification. Verification of an agent'
 observable actions is not achievable against an adversary, and Section 7 states why. What is specified
 here is falsification: a declaration that can be shown to have been violated, and a violation that is
 attributable.
+
+--- middle
 
 # Introduction
 
@@ -385,3 +390,5 @@ author as change controller.
    adversary uses to maximize it, so a declaration member carrying it publishes the adversary's
    objective function. Bounded detection latency remains a sound idea and a deployment may compute one
    privately; it is not something a declaration should carry across a trust boundary.
+
+--- back

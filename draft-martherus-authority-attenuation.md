@@ -54,6 +54,9 @@ informative:
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-identity/
     date: 2026
 ---
+
+--- abstract
+
 Autonomous agents delegate to other agents, which delegate further. Where a delegation chain exists,
 each hop should narrow the authority available to the delegate. Existing capability systems enforce
 attenuation cryptographically but leave the meaning of each narrowing application-defined, so an
@@ -67,6 +70,8 @@ Its subject is the meaning of a hop, not the construction of a chain. It defines
 trust model, and its predicates are intended to be carried in whatever append-only chain a deployment
 already operates. A minimal chain binding is provided (Section 4.2) so the document is implementable on
 its own.
+
+--- middle
 
 # Introduction
 
@@ -441,3 +446,5 @@ much it is trusted.
 
 `application/attenuated-hop+json` and `application/attenuated-hop+cbor`, registered per {{RFC6838}} with
 this document as the specification and the author as change controller.
+
+--- back

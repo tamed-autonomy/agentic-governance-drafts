@@ -46,6 +46,9 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
+
+--- abstract
+
 Systems that evaluate autonomous agents increasingly compute a notion of trust from behavioral history.
 Those computations are proprietary, their inputs are not portable, and their outputs are scalar scores
 whose meaning does not survive leaving the system that produced them.
@@ -54,6 +57,8 @@ This document defines a format for *trust observations*: signed, typed, attribut
 named observer about a named subject over a stated window. It deliberately does not define a trust score,
 a scoring algorithm, or a portable reputation value. A relying party computes its own conclusions from
 observations it chooses to accept, relative to its own trust root.
+
+--- middle
 
 # Introduction
 
@@ -424,3 +429,5 @@ is the most likely route by which one would re-enter.
    {{I-D.martherus-ktp-profile}}, which maps Trust Proofs onto this document's observation model and
    restates the Section 3 prohibition on portable scores. It is informative here; this document is
    complete without it.
+
+--- back
