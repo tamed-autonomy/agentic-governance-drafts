@@ -28,6 +28,80 @@ normative:
       - ins: R. Martherus
     date: 2026
 informative:
+  OIDF.authzen:
+    title: "Authorization API 1.0"
+    target: https://openid.net/specs/authorization-api-1_0-final.html
+    author:
+      - org: OpenID Foundation
+    date: 2026-01-11
+  CSA.aarm:
+    title: "Autonomous Action Runtime Management (AARM) v1.0"
+    target: https://aarm.dev/spec
+    author:
+      - org: Cloud Security Alliance
+    date: 2026-02
+  AgenticRei:
+    title: "Deontic Policies for Runtime Governance of Agentic AI Systems"
+    target: https://arxiv.org/abs/2606.19464
+    author:
+      - ins: A. Joshi
+      - ins: T. Finin
+      - ins: K.P. Joshi
+      - ins: L. Kagal
+    seriesinfo:
+      arXiv: 2606.19464
+    date: 2026-06
+  GrossiAldewereldDignum:
+    title: "Ubi Lex, Ibi Poena: Designing Norm Enforcement in E-Institutions"
+    author:
+      - ins: D. Grossi
+      - ins: H. Aldewereld
+      - ins: F. Dignum
+    date: 2006
+  Chisholm1963:
+    title: "Contrary-to-Duty Imperatives and Deontic Logic"
+    author:
+      - ins: R. Chisholm
+    seriesinfo:
+      Analysis: "24"
+    date: 1963
+  P3P:
+    title: "The Platform for Privacy Preferences 1.0 (P3P1.0) Specification"
+    target: https://www.w3.org/TR/P3P/
+    author:
+      - ins: L. Cranor
+      - org: World Wide Web Consortium
+    date: 2002
+  Edelman2009:
+    title: "Adverse Selection in Online 'Trust' Certifications"
+    author:
+      - ins: B. Edelman
+    date: 2009
+  SHADEArena:
+    title: "SHADE-Arena: Evaluating Sabotage and Monitoring in LLM Agents"
+    target: https://arxiv.org/abs/2506.15740
+    author:
+      - ins: J. Kutasov
+    seriesinfo:
+      arXiv: 2506.15740
+    date: 2025
+  GoalDrift:
+    title: "Evaluating Goal Drift in Language Model Agents"
+    target: https://arxiv.org/abs/2505.02709
+    author:
+      - ins: R. Arike
+      - ins: E. Donoway
+      - ins: H. Bartsch
+      - ins: M. Hobbhahn
+    seriesinfo:
+      AIES: "2025"
+    date: 2025
+  METR2025:
+    title: "Recent Frontier Models Are Reward Hacking"
+    target: https://metr.org/blog/2025-06-05-recent-reward-hacking/
+    author:
+      - org: METR
+    date: 2025-06
   RFC6838:
   OIDF.ssf:
     title: "OpenID Shared Signals Framework Specification 1.0"
@@ -57,15 +131,6 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
-
-# Normative Constraint Exchange for Autonomous Agents
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-
----
-
-## Abstract
-
 Authorization systems for autonomous agents answer whether an actor is permitted to perform an action.
 They do not carry the obligations and prohibitions that a relying party requires to be evaluated
 alongside that permission — trading blackout windows, litigation holds, employment status, clinical
@@ -79,18 +144,18 @@ wire between systems that already have their own.
 Composition of this engine's decisions with those of other, independent enforcement points is a separate
 problem and is not specified here.
 
----
+# Introduction
 
-## 1. Introduction
-
-The OpenID Foundation's Authorization API 1.0 (AuthZEN), Final as of 11 January 2026, permits an
+The OpenID Foundation's Authorization API 1.0 (AuthZEN) {{OIDF.authzen}}, Final as of 11 January 2026,
+permits an
 authorization decision response to carry a context field conveying — in Section 5.5.1, "Decision
 Context" — *"Advices" and/or "Obligations" tied to the access decision.*
 
 It defines no schema for them, no vocabulary, no evaluation lifecycle, and no discharge confirmation. The
 slot exists; the contents are unspecified.
 
-Cloud Security Alliance's Autonomous Action Runtime Management (AARM) v1.0 requires in R4 that a policy
+Cloud Security Alliance's Autonomous Action Runtime Management (AARM) v1.0 {{CSA.aarm}} requires in R4
+that a policy
 engine "MUST be capable of producing exactly one of five decisions: ALLOW, DENY, MODIFY, STEP_UP, or
 DEFER," and in R2/R3 that stated agent intent be a mandatory policy input. AARM specifies what a runtime
 must do. It does not specify any artifact that crosses a trust boundary.
@@ -99,7 +164,7 @@ This document supplies the missing artifact. It is positioned as filling a decla
 AuthZEN and as providing the interchange format that AARM's requirements presuppose — not as an
 alternative to either.
 
-### 1.1 What this document does not do
+## What this document does not do
 
 This specification does not define ethics, values, or alignment. It defines the carriage of constraints
 whose content is determined entirely by the deploying organization — its regulator, its counsel, its
@@ -110,10 +175,14 @@ It does not define a policy engine. Reasoners for deontic policy exist and are a
 (Section 3). This document specifies the layer beneath them.
 
 It does not attempt to verify agent intent. Intent verification against observed behavior is addressed
-in a companion document and is subject to negative results that make soundness against an adversary
-unattainable.
+in {{I-D.martherus-intent-scope}} and is subject to negative results that make soundness against an
+adversary unattainable.
 
-### 1.2 Why a relying party would deploy this
+It does not extend OAuth. Rich Authorization Requests {{RFC9396}} and Token Exchange {{RFC8693}} improve
+the precision of what is authorized; this document concerns what is *obliged or forbidden* alongside that
+authorization, and composes with either.
+
+## Why a relying party would deploy this
 
 A standard that benefits only the party bearing its cost does not deploy. The Do Not Track effort closed
 citing "not sufficient deployment ... nor indications of planned support."
@@ -125,9 +194,7 @@ and evaluated identically at every enforcement point is the deliverable. The ven
 from the buyer's: a product that cannot consume the buyer's existing constraints is a product that must
 be configured from scratch.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -154,7 +221,7 @@ and records a sanctionable violation (*enforced*), or permits and records withou
 These are distinct mechanisms with distinct latency and observability requirements and MUST NOT be
 conflated.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 Used consistently across this document set. Each document defines its own *consequences*; the terms mean
 the same thing everywhere.
@@ -170,7 +237,7 @@ the same thing everywhere.
 `unavailable` **MUST NOT** be reported or treated as `absent`. Section 8 defines this document's
 consequence for an unavailable signal source.
 
-### 2.2 Action description
+## Action description
 
 Constraints are evaluated against an action description. This document does not define a transport for
 it, but requires that the following be resolvable from the evaluation context, since conditions
@@ -186,17 +253,16 @@ it, but requires that the following be resolvable from the evaluation context, s
 A deployment **MUST** use one action-class taxonomy across every specification in this set that
 references `action_class`.
 
----
-
-## 3. Relationship to Prior Work
+# Relationship to Prior Work
 
 This document introduces no new idea. The argument that permission alone is insufficient, and that
 obligations belong in a layer above access control, is decades old. What has changed is the deployment
 substrate.
 
-### 3.1 Directly overlapping work
+## Directly overlapping work
 
-**AgenticRei** (Joshi, Finin, Joshi and Kagal, IEEE Symposium on Agentic Services, June 2026) is an
+**AgenticRei** {{AgenticRei}} (Joshi, Finin, Joshi and Kagal, IEEE Symposium on Agentic Services,
+June 2026) is an
 OWL-based deontic policy language built on Rei, providing obligations, dispensations, policy conflict
 resolution, and reasoning with the logic engine deliberately outside the model. Its critique of
 incumbent engines — that XACML, Rego and Cedar address only the permit/prohibit subset — is the same
@@ -213,6 +279,7 @@ document requires OWL, RDF, or a description-logic substrate.
 
 **Normative multi-agent systems** research has specified electronic institutions, norm regimentation and
 enforcement, and monitoring-bounded norms since the late 1990s. Grossi, Aldewereld and Dignum's
+{{GrossiAldewereldDignum}}
 distinction between regimentation and enforcement is adopted here directly (Section 2, Section 5.3).
 
 **Policy language lineage.** KAoS, Rei and Ponder were each technically sound and none achieved broad
@@ -222,7 +289,7 @@ subject/action/resource/context decision model, policy combining, and obligation
 OPA, and in AuthZEN's request and response shapes. This document takes that history as instruction on
 expressiveness (Section 6.6), not as a reason to avoid the constructs.
 
-### 3.2 Why now
+## Why now
 
 Four conditions differ from those under which the prior work was specified.
 
@@ -235,9 +302,9 @@ Four conditions differ from those under which the prior work was specified.
 4. Comparing what was declared against what was done is computationally tractable at scale. It was not
    when machine-readable purpose was last standardized.
 
-### 3.3 The cautionary case
+## The cautionary case
 
-The Platform for Privacy Preferences (P3P) standardized machine-readable purpose declarations. Measured
+The Platform for Privacy Preferences {{P3P}} standardized machine-readable purpose declarations. Measured
 deployments found approximately one in three compact policies invalid, with identical invalid tokens
 circulated as a workaround. P3P declarations opened a gate and were never checked against behavior.
 
@@ -245,12 +312,13 @@ The lesson is adopted as a requirement: **a constraint framework that only gates
 be falsified at scale.** Section 5.4 requires that enforcement outcomes be observable, and Section 8
 requires issuer accountability be carried in the artifact rather than assumed operationally.
 
-### 3.4 Deontic representation
+## Deontic representation
 
 This document does **not** adopt Standard Deontic Logic semantics, and implementers are cautioned against
 treating that system as a baseline despite its name.
 
-The governing reason is contrary-to-duty obligation: what is owed *after* a violation cannot be
+The governing reason is contrary-to-duty obligation {{Chisholm1963}}: what is owed *after* a violation
+cannot be
 consistently represented in a logic that inherits classical consequence inside the obligation operator.
 Breach followed by remediation is the ordinary case in agent governance, not an edge case.
 
@@ -261,9 +329,7 @@ by a fact that the previous evaluation produced. Implementations requiring genui
 SHOULD use input/output logic or a defeasible deontic semantics in their reasoner; this document does not
 constrain that choice and does not depend on it.
 
----
-
-## 4. Constraint Object
+# Constraint Object
 
 A constraint is a JSON {{RFC8259}} or CBOR {{RFC8949}} object with the following members.
 
@@ -286,7 +352,7 @@ A constraint is a JSON {{RFC8259}} or CBOR {{RFC8949}} object with the following
 
 A constraint **MUST** be signed. See Section 7.
 
-### 4.1 Tiers
+## Tiers
 
 Three tiers are defined. The tier expresses the character of the authority behind a constraint, not its
 severity.
@@ -305,7 +371,7 @@ Implementations **MUST** be able to report which tier produced a given decision.
 tiers frequently have different review authorities, and an outcome that cannot be attributed to a tier
 cannot be reviewed by the right body.
 
-### 4.2 Conditions
+## Conditions
 
 Each condition is a predicate over context signals and action attributes.
 
@@ -334,7 +400,7 @@ the same typed context.
 An implementation that accepts the expression form **MUST** reject any expression that is not
 side-effect-free and deterministic.
 
-### 4.3 Status
+## Status
 
 `status` governs whether a matched constraint's decision is applied.
 
@@ -347,21 +413,19 @@ Implementations **SHOULD** support promotion from `observe` to `enforcing` witho
 `status` is orthogonal to `mode` (Section 5.3). `status` asks whether this constraint is live; `mode`
 asks what kind of control it is when it is.
 
----
-
-## 5. Evaluation Lifecycle
+# Evaluation Lifecycle
 
 Constraints are evaluated at three points. A specification that evaluates only at admission cannot
 address a class of failure that is empirically well documented: instruction adherence in language-model
-agents degrades over long autonomous operation, with drift correlating with context length. Admission-
+agents degrades over long autonomous operation {{GoalDrift}}, with drift correlating with context length. Admission-
 time evaluation alone is insufficient for actions that are not instantaneous.
 
-### 5.1 Before the action
+## Before the action
 
 The PEP evaluates all constraints whose `action_class` match the proposed action. The composed decision
 (Section 6.3) is returned to the caller.
 
-### 5.2 During the action
+## During the action
 
 For actions with duration, a constraint MAY declare `reevaluation_triggers`. When a listed event occurs,
 the PEP **MUST** re-evaluate that constraint against current context and apply the composed result to the
@@ -374,7 +438,7 @@ Defined trigger classes:
 - `scope_expansion` — the action's resource or data scope grew after admission
 - `delegation` — the acting agent delegated to another agent
 
-#### Transport for signal change
+### Transport for signal change
 
 This document defines no transport by which a PEP learns that a context signal changed. Deployments
 **SHOULD** use the OpenID Shared Signals Framework {{OIDF.ssf}}, Final as of 29 August 2025, which
@@ -389,7 +453,7 @@ forced to adopt a second one. But a deployment with *no* propagation mechanism c
 Re-evaluation producing `deny` **MUST** halt the remainder of the action. It does not retroactively
 invalidate work already completed; see Section 5.5.
 
-### 5.3 Enforcement mode
+## Enforcement mode
 
 Each constraint declares how it is controlled.
 
@@ -403,7 +467,7 @@ Each constraint declares how it is controlled.
 declared `regimented`.** A norm specified over unobservable state is decoration. Implementations **MUST**
 reject at load time any `regimented` constraint referencing a signal the PEP cannot resolve.
 
-### 5.4 After the action
+## After the action
 
 The PEP **MUST** emit an evaluation record for every action against which any constraint matched,
 including constraints in `observe` status. The record **MUST** carry an `action_ref` (Section 5.5) and
@@ -415,7 +479,7 @@ This requirement is not audit convenience. It is the observation channel that P3
 framework whose declarations are never compared against outcomes has no mechanism by which a false or
 misconfigured constraint is discovered.
 
-### 5.5 Action reference
+## Action reference
 
 Records produced by this specification correlate with records produced by companion specifications for
 the same action. Correlation uses the `trace-id` of W3C Trace Context {{W3C.trace-context}}.
@@ -429,7 +493,7 @@ emitted by the telemetry infrastructure these enforcement points run inside, and
 auditor can join a constraint evaluation, an intent comparison, and a composition record for one action
 without any of the three specifications depending on the others.
 
-### 5.6 Post-violation obligations
+## Post-violation obligations
 
 When a violation is recorded, the evaluation record itself becomes a context signal. Remediation duties
 are expressed as ordinary constraints conditioned on that signal.
@@ -453,11 +517,9 @@ are expressed as ordinary constraints conditioned on that signal.
 This is the structural avoidance of contrary-to-duty paradox described in Section 3.4. No obligation is
 nested inside another; a violation is a fact, and duties conditioned on facts are ordinary constraints.
 
----
+# Decision Model
 
-## 6. Decision Model
-
-### 6.1 Decision values
+## Decision values
 
 | Value | Meaning |
 |---|---|
@@ -473,7 +535,7 @@ things. `step_up` means a decision is pending and the caller waits; `defer` mean
 and the caller should not. An implementation that collapses them cannot tell a caller whether to hold the
 request open or abandon it, which is the difference between a stalled agent and a retried one.
 
-### 6.2 Mapping to CSA AARM R4
+## Mapping to CSA AARM R4
 
 AARM R4 requires exactly five decisions. This document's vocabulary maps onto it without loss:
 
@@ -493,7 +555,7 @@ The distinction between the suspending decisions and `narrow_scope` is preserved
 different operational consequences: the first two suspend the action, the third proceeds immediately with
 less authority.
 
-### 6.3 Composition within this engine
+## Composition within this engine
 
 When multiple constraints match **at one enforcement point**, the composed decision is the most
 restrictive, ordered:
@@ -515,7 +577,7 @@ administrator — and is specified in {{I-D.martherus-layer-handoff}}. An implem
 emits one composed decision; what a coordinator does with it alongside other engines' decisions is out of
 scope here.
 
-### 6.4 Escalation authority
+## Escalation authority
 
 Where `decision` is `step_up` or `defer`, the constraint **MUST** carry `escalation_authority`: a
 non-empty array of identifiers permitted to approve the action.
@@ -526,7 +588,7 @@ outside that array, and **MUST** record the approving principal in the evaluatio
 A suspending decision naming no authority is not actionable — it halts an action with no defined
 route to resumption — and implementations **MUST** reject such constraints at load time.
 
-### 6.5 Scope reduction
+## Scope reduction
 
 Where `decision` is `narrow_scope`, the constraint **MUST** carry `scope_reduction`, an object stating
 the reduced authority. Members are drawn from the attenuation predicate registry of
@@ -548,7 +610,7 @@ delegation chain — how long a grant lives, how far it may be passed on, how wi
 engine evaluating a single action has no standing to alter them. A deployment needing to bound delegation
 does so in the delegation chain, not in a per-action decision.
 
-### 6.6 On expressiveness
+## On expressiveness
 
 The condition model in Section 4.2 is deliberately restricted. It is not Turing-complete, has no
 user-defined functions, and cannot express recursion or quantification over collections.
@@ -562,9 +624,7 @@ Constraints requiring greater expressive power belong in a reasoner (Section 3.1
 specifies what crosses the wire, and what crosses the wire should be evaluable identically by
 independent implementations without a shared runtime.
 
----
-
-## 7. Encoding and Signing
+# Encoding and Signing
 
 Constraints **MUST** be serialized as JSON {{RFC8259}} or CBOR {{RFC8949}}.
 
@@ -573,7 +633,7 @@ encoding.
 
 Implementations **MUST NOT** define an XML serialization of this format.
 
-### 7.1 Cryptographic agility
+## Cryptographic agility
 
 Every signed constraint **MUST** carry an explicit algorithm identifier. Implementations **MUST NOT**
 assume a default algorithm.
@@ -586,16 +646,14 @@ registered for JOSE and COSE.
 A verifier that cannot validate a constraint's signature **MUST** treat the constraint as unavailable and
 apply the degraded-context policy of Section 8, rather than treating it as absent.
 
-### 7.2 What this format is not
+## What this format is not
 
 This specification defines signed, independently verifiable objects and an append-only record of
 evaluations. It does **not** define, require, or presume a distributed ledger, a consensus protocol, a
 chain of blocks, or a token. Evaluation records are ordinary signed records held by the enforcing party.
 Implementers seeking transparency properties for those records should refer to SCITT {{RFC9943}}.
 
----
-
-## 8. Degraded Context
+# Degraded Context
 
 A constraint whose conditions reference an unavailable signal source cannot be evaluated.
 
@@ -615,9 +673,7 @@ degraded context. Where supported, the override **MUST**:
 An override that is not visible in the response is indistinguishable to the caller from a decision made
 on complete information. That is the failure mode this requirement exists to prevent.
 
----
-
-## 9. Security Considerations
+# Security Considerations
 
 **Constraint issuance is a privileged operation.** An attacker able to issue constraints can deny
 arbitrary actions or, more damagingly, issue an `allow` constraint in `enforcing` status that masks a
@@ -625,7 +681,8 @@ arbitrary actions or, more damagingly, issue an `allow` constraint in `enforcing
 the latter attack ineffective: an injected `allow` cannot override a `deny`. Deployments **MUST**
 restrict which issuers a PEP accepts.
 
-**Issuer accountability is carried in the artifact.** Empirical study of third-party certification found
+**Issuer accountability is carried in the artifact.** Empirical study of third-party certification
+{{Edelman2009}} found
 certified entities were more than twice as likely to be untrustworthy as uncertified ones — a signal
 whose issuer bears no cost for being wrong does not merely fail, it inverts. The `issuer` member is
 mandatory and signatures are mandatory so that an incorrect constraint is attributable.
@@ -640,12 +697,14 @@ indistinguishable telemetry, an agent's behavior is correspondingly less constra
 **SHOULD** ensure that actions subject to different constraints emit distinguishable observations.
 
 **Monitoring does not scale as a sole control.** Published evaluation of automated transcript monitoring
+{{SHADEArena}}
 reports best-case AUC of 0.87 for model-based monitors and 0.65 for human reviewers at approximately 103
 minutes per transcript, with the authors observing that thresholds catching most misbehavior imply false
 positive rates that make manual review infeasible. This motivates `regimented` mode: for constraints
 where post-hoc detection is inadequate, the control must be in the action path.
 
-**Agents may act contrary to stated intent knowingly.** Independent evaluation records a frontier model
+**Agents may act contrary to stated intent knowingly.** Independent evaluation {{METR2025}} records a
+frontier model
 answering that its actions did not adhere to user intentions in ten of ten cases where it had
 circumvented the task's intent. Constraint evaluation **MUST NOT** rely on agent self-report for any
 condition whose value the agent can influence.
@@ -654,9 +713,7 @@ condition whose value the agent can influence.
 `observe` rather than `enforcing` status learns which controls are inert. Evaluation responses **SHOULD
 NOT** disclose the status of constraints that did not affect the composed decision.
 
----
-
-## 10. Privacy Considerations
+# Privacy Considerations
 
 Constraint conditions routinely reference personal data — employment status, disciplinary state, clinical
 context. A constraint object therefore reveals, by its conditions alone, what categories of personal data
@@ -667,9 +724,7 @@ records **MUST NOT** include signal values beyond those necessary to explain the
 implementations **SHOULD** support recording a condition as matched without recording the value that
 matched it.
 
----
-
-## 11. IANA Considerations
+# IANA Considerations
 
 This document requests creation of three registries. Enforcement modes are **not** registered: the
 regimented / enforced / recorded trichotomy is closed by construction — it enumerates the three things a
@@ -688,7 +743,7 @@ composed decision, which is why the policy is Standards Action rather than Speci
 **Normative Constraint Re-evaluation Triggers** — initial values `signal_change`, `elapsed`,
 `scope_expansion`, `delegation`. Registration policy: Specification Required.
 
-### Registration template
+## Registration template
 
 Each registration **MUST** supply:
 
@@ -700,7 +755,7 @@ Each registration **MUST** supply:
 | Change controller | The party who may modify or deprecate the registration |
 | Contact | Email address for questions |
 
-### Designated expert guidance
+## Designated expert guidance
 
 The designated expert **SHOULD** approve a registration when the value names a genuinely distinct concept
 whose meaning is unambiguous from the supplied description, and **SHOULD** reject one that is a synonym
@@ -708,14 +763,12 @@ of an existing value, a deployment-local policy knob, or a value whose semantics
 vendor's implementation. Where a proposed value overlaps an existing one, the expert **SHOULD** ask
 whether extending the existing description would serve as well.
 
-### Media types
+## Media types
 
 `application/constraint+json` and `application/constraint+cbor`, registered per {{RFC6838}} with this
 document as the specification and the author as change controller.
 
----
-
-## 12. Open Items
+# Open Items
 
 Items requiring resolution before submission:
 
@@ -731,26 +784,3 @@ Items requiring resolution before submission:
    not contradict them.
 6. Reconcile with the reference implementation, which currently implements the structured condition form
    only and does not implement `reevaluation_triggers`.
-
----
-
-## 13. References
-
-Normative references: {{RFC2119}}, {{RFC8174}}, {{RFC8259}}, {{RFC8949}}, {{RFC9052}}, {{RFC7515}}.
-
-Informative: {{RFC9396}}, {{RFC8693}}, {{RFC9943}}.
-
-Non-RFC references to be added in kramdown format before submission:
-
-- OpenID Foundation, "Authorization API 1.0" (AuthZEN), Final, January 2026.
-- Cloud Security Alliance, "Autonomous Action Runtime Management (AARM) v1.0," February 2026.
-- Joshi, A., Finin, T., Joshi, K.P., Kagal, L., "Deontic Policies for Runtime Governance of Agentic AI
-  Systems," arXiv:2606.19464, IEEE Symposium on Agentic Services, June 2026.
-- Grossi, D., Aldewereld, H., Dignum, F., "Ubi Lex, Ibi Poena: Designing Norm Enforcement in E-Institutions," 2006.
-- Chisholm, R., "Contrary-to-Duty Imperatives and Deontic Logic," Analysis 24, 1963.
-- Cranor, L., et al., "The Platform for Privacy Preferences 1.0 (P3P1.0) Specification," W3C, 2002.
-- Edelman, B., "Adverse Selection in Online 'Trust' Certifications," 2009.
-- Kutasov, J., et al., "SHADE-Arena," arXiv:2506.15740, 2025.
-- Arike, R., Donoway, E., Bartsch, H., Hobbhahn, M., "Evaluating Goal Drift in Language Model Agents,"
-  AIES 2025.
-- METR, "Recent Frontier Models Are Reward Hacking," June 2025.

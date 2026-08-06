@@ -53,15 +53,6 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
-
-# Intent Scope Declarations for Autonomous Agents
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-
----
-
-## Abstract
-
 An access token states what an agent may do. It does not state what the agent is doing it *for*. Where a
 single credential authorizes a broad class of operations, actions that are individually permitted may
 collectively serve a purpose no one authorized.
@@ -76,9 +67,7 @@ observable actions is not achievable against an adversary, and Section 7 states 
 here is falsification: a declaration that can be shown to have been violated, and a violation that is
 attributable.
 
----
-
-## 1. Introduction
+# Introduction
 
 OAuth 2.0 Rich Authorization Requests {{RFC9396}} allow an authorization request to carry structured
 detail about the access sought, and Token Exchange {{RFC8693}} allows a token to be exchanged with
@@ -90,7 +79,7 @@ sales report holds a credential that is equally valid for reading that system to
 package. Both are reads. Both are in scope. The difference is purpose, and purpose is currently a comment
 in a runbook.
 
-### 1.1 Falsification, not verification
+## Falsification, not verification
 
 The naive form of this specification would declare a purpose, observe the agent, and verify that the
 behavior matched. That is not available.
@@ -115,7 +104,7 @@ Accordingly this document specifies:
 
 It does not specify a recognizer, and Section 7 explains why standardizing one would be an error.
 
-### 1.2 Relationship to prior work
+## Relationship to prior work
 
 South et al., "Authenticated Delegation and Authorized AI Agents," proposes OAuth 2.0 and OpenID Connect
 extensions for delegating scoped authority to agents, and is the nearest prior art to this document. It
@@ -131,9 +120,7 @@ as a workaround recipe. P3P declarations opened a gate and were never compared a
 for divergence will be falsified at scale. Section 5 makes the comparison record mandatory rather than
 optional for this reason.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -147,7 +134,7 @@ described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in 
 
 **Comparison Record:** The record of an evaluation of an action against a declaration.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 Used consistently across this document set. Each document defines its own *consequences*; the terms mean
 the same thing everywhere.
@@ -164,9 +151,7 @@ the same thing everywhere.
 state of an *artifact*; the `undeterminable` comparison result of Section 5 describes the state of an
 *evaluation* and is distinct.
 
----
-
-## 3. Declaration Object
+# Declaration Object
 
 A JSON {{RFC8259}} or CBOR {{RFC8949}} object.
 
@@ -192,7 +177,7 @@ are retained for years; see {{I-D.martherus-normative-constraint}} Section 7.1.
 must later decide whether a divergence mattered. Implementations **MUST NOT** attempt to derive
 enforcement behavior from it.
 
-### 3.1 The declarant is not the agent
+## The declarant is not the agent
 
 A declaration signed by the agent it governs is a self-report and carries the weight of one. Deployments
 **SHOULD** require that declarations be signed by the party that deployed or delegated to the agent.
@@ -201,7 +186,7 @@ Where an agent signs its own declaration, relying parties **MUST** treat the dec
 self-asserted, and **MUST NOT** use it as evidence for any property the agent has an incentive to
 misstate.
 
-### 3.2 Delegation rights
+## Delegation rights
 
 The `delegation` object states whether the subject may delegate and under what constraints.
 
@@ -225,9 +210,7 @@ limitation recorded in {{I-D.martherus-authority-attenuation}} Section 5.3: `fan
 from a single chain and requires an enumeration mechanism. A declaration stating a `fanout` bound in a
 deployment providing no such mechanism is advisory.
 
----
-
-## 4. Amendment
+# Amendment
 
 Scope changes. An agent given a broader task mid-operation needs a broader declaration, and a
 specification that forces a new declaration for every change will be routed around.
@@ -255,9 +238,7 @@ A relying party evaluating an action **MUST** evaluate against the declaration i
 the action, not the current head of the amendment chain. Retroactive broadening **MUST NOT** convert a
 past divergence into compliance.
 
----
-
-## 5. Comparison Record
+# Comparison Record
 
 An enforcement point evaluating an action against a declaration **MUST** emit a comparison record.
 
@@ -285,9 +266,7 @@ this document claims (Section 7), a record that cannot carry it defeats the spec
 Comparison records are the input to the `intent_compliance` trust observation type; see
 {{I-D.martherus-trust-observation}} Section 5.1.
 
----
-
-### 5.1 Action reference
+## Action reference
 
 Records produced by this specification correlate with records produced by companion specifications for
 the same action. Correlation uses the `trace-id` of W3C Trace Context {{W3C.trace-context}}.
@@ -301,7 +280,7 @@ emitted by the telemetry infrastructure these enforcement points run inside, and
 auditor can join a constraint evaluation, an intent comparison, and a composition record for one action
 without any of the three specifications depending on the others.
 
-## 6. Observation Distinguishability
+# Observation Distinguishability
 
 Where distinct actions produce indistinguishable observations at the enforcement point, they are
 indistinguishable to any recognizer, however capable. In the formal treatment this is a many-to-one
@@ -320,9 +299,7 @@ telemetry collides with benign activity. This is a rational strategy, not an ano
 Of everything in this document, this is the requirement most within the deploying party's unilateral
 control. Recognition capability is bounded by adversary construction; instrumentation granularity is not.
 
----
-
-## 7. Security Considerations
+# Security Considerations
 
 **This specification does not detect a determined adversary, and must not be represented as doing so.**
 The constructions referenced in Section 1.1 provide an agent with a guaranteed degree of goal ambiguity
@@ -358,9 +335,7 @@ alert on amendments that broaden scope shortly before or after a divergence.
 either poorly instrumented or deliberately operating where it cannot be evaluated. Section 5 requires
 that these be distinguishable from `in_scope`; deployments **SHOULD** monitor their rate per subject.
 
----
-
-## 8. Privacy Considerations
+# Privacy Considerations
 
 A declaration states what an agent is for, and a comparison record states what it did. Together they are
 a purpose-and-activity profile of the operator, not only the agent.
@@ -372,9 +347,7 @@ Where the declaration governs an agent acting for a natural person, the `purpose
 sensitive; deployments **SHOULD** consider whether it can be omitted from copies distributed to
 enforcement points that do not require it.
 
----
-
-## 9. IANA Considerations
+# IANA Considerations
 
 This document requests creation of no registries.
 
@@ -389,15 +362,13 @@ Three were proposed in an earlier revision and each has been withdrawn:
 - **Amendment Notice Modes** (`none`, `notify`, `approve`) — deployment policy rather than an interop
   contract. Two parties do not need to agree on how a declarant notifies its own approvers.
 
-### Media types
+## Media types
 
 This document requests registration of `application/intent-declaration+json` and
 `application/intent-declaration+cbor` per {{RFC6838}}, with this document as the specification and the
 author as change controller.
 
----
-
-## 10. Open Items
+# Open Items
 
 1. Determine whether the declaration should bind to a token (via a claim or confirmation method) or
    remain a separately resolved artifact. Binding is simpler; separation keeps tokens small and matches

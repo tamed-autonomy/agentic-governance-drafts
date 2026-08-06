@@ -50,19 +50,6 @@ normative:
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-enforce/
     date: 2026
 ---
-
-# Kinetic Trust Protocol Profile for Agentic Governance Interchange
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-
-⚠️ **Do not file without co-author discussion.** This document profiles the Kinetic Trust Protocol,
-authored by Chris Perkins (New Mexico Cyber Intelligence & Threat Response Alliance) and published under
-Apache License 2.0. See Section 8.
-
----
-
-## Abstract
-
 This document profiles the Kinetic Trust Protocol (KTP) as a trust and delegation-chain substrate for two
 companion specifications: authority attenuation predicates and portable trust observations.
 
@@ -70,9 +57,7 @@ It exists so that those specifications need not depend on KTP. Each stands alone
 any kind. A deployment that has chosen KTP uses this profile to bind them together; a deployment that has
 not is unaffected.
 
----
-
-## 1. Introduction
+# Introduction
 
 KTP defines a physics-derived model in which an agent's effective trust is computed from its accumulated
 standing and current environmental conditions, and in which agent identity is a trajectory rather than a
@@ -87,7 +72,7 @@ supplies one.
 {{I-D.martherus-trust-observation}} defines signed observations by named observers and deliberately
 defines no trust scale. KTP supplies one, scoped to an issuing oracle.
 
-### 1.1 Why this is a separate document
+## Why this is a separate document
 
 The two companion specifications are intended for a standards process. KTP is published by a single
 organization outside any recognized standards body. Binding the base specifications to it would make
@@ -97,7 +82,7 @@ they use it.
 Isolating the dependency here means the reference to KTP appears in exactly one document, which can be
 evaluated on its own terms.
 
-### 1.2 Two quantities, two evaluations
+## Two quantities, two evaluations
 
 A delegation chain carries two distinct quantities that are easily conflated:
 
@@ -111,9 +96,7 @@ sufficient trust for an action its attenuated authority forbids, and may hold au
 current trust does not support. An implementation **MUST NOT** derive authority from a trust quantity, or
 trust from an attenuation predicate.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -122,9 +105,7 @@ described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in 
 Terms from {{KTP-CORE}} and {{KTP-IDENTITY}} — Trust Proof, trajectory chain, transaction record,
 Sponsorship Bond, `E_base`, `E_trust` — are used as defined there.
 
----
-
-## 3. Carrying Attenuation in a Trajectory Chain
+# Carrying Attenuation in a Trajectory Chain
 
 {{I-D.martherus-authority-attenuation}} Section 4.1 permits its predicates to be carried in an existing
 chain, provided the binding names the carrying field and preserves ordering and hash-linking.
@@ -137,7 +118,7 @@ Under this profile:
 - The trajectory chain's `previous_hash` satisfies the hash-linking requirement.
 - The chain's append-only property satisfies the ordering requirement.
 
-### 3.1 Delegation depth MUST NOT be derived from `sequence`
+## Delegation depth MUST NOT be derived from `sequence`
 
 **This is the most important requirement in this document.**
 
@@ -159,7 +140,7 @@ A verifier evaluating a chain under this profile **MUST** consider only transact
 {{I-D.martherus-authority-attenuation}} Section 6. Records without one are not delegation hops and do not
 participate in monotonicity, depth, or composed-authority evaluation.
 
-### 3.2 Signatures
+## Signatures
 
 KTP-Identity requires that each transaction record carry an agent signature and an Oracle attestation.
 {{I-D.martherus-authority-attenuation}} Section 4.3 recommends a delegate signature attesting acceptance
@@ -173,9 +154,7 @@ A deployment requiring delegate accountability **MUST** carry a delegate signatu
 set in addition to the signatures KTP-Identity requires. An implementation **MUST NOT** treat the Oracle
 attestation as satisfying that requirement.
 
----
-
-## 4. Trust Proofs as Trust Observations
+# Trust Proofs as Trust Observations
 
 A KTP Trust Proof {{KTP-CORE}} is a signed, short-lived assertion by a named Trust Oracle about an
 agent's standing under stated conditions. That is structurally an observation in the sense of
@@ -192,7 +171,7 @@ A Trust Proof **MAY** be consumed as a trust observation under the following map
 | `method` | `direct_enforcement` where the oracle observed directly; otherwise `model_inference` |
 | `expires` | `exp` |
 
-### 4.1 `e_trust` is not a portable trust score
+## `e_trust` is not a portable trust score
 
 {{I-D.martherus-trust-observation}} Section 3 prohibits an observation from carrying a general-purpose
 trust score, on the grounds that no symmetric reputation function is sybilproof.
@@ -213,7 +192,7 @@ input, not a function aggregating reports from other identities. Whether the acc
 component is entirely self-earned, and therefore whether the result applies at all, **is an open item**
 (Section 9).
 
-### 4.2 Newcomer distrust
+## Newcomer distrust
 
 {{I-D.martherus-trust-observation}} Section 6.2 requires that a subject with no observations be
 distinguishable from one with favorable observations.
@@ -223,9 +202,7 @@ KTP satisfies this structurally: an agent begins with low `E_base` and raises it
 deployment under this profile **MUST NOT** configure a floor that admits an unproven agent to a tier its
 accumulated standing does not support.
 
----
-
-## 5. Sponsorship
+# Sponsorship
 
 {{I-D.martherus-trust-observation}} defines a `sponsor_conduct` observation type keyed by a sponsor
 identifier, and deliberately does not define how a sponsorship relation is established.
@@ -238,9 +215,7 @@ sponsor's contribution decays as the sponsored agent accumulates its own standin
 entirely by {{KTP-IDENTITY}} and an implementation **MUST NOT** derive them from anything in the
 companion specifications.
 
----
-
-## 6. Enforcement Ordering
+# Enforcement Ordering
 
 {{KTP-ENFORCE}} defines an evaluation sequence: Trust Proof validation, sovereignty veto, tier
 eligibility, the A ≤ E constraint, then custom policy.
@@ -253,9 +228,7 @@ authorizing an action outside the composed authority.
 The converse also holds: composed authority permitting an action does not satisfy KTP's constraints, and
 an implementation **MUST NOT** bypass them on that basis.
 
----
-
-## 7. Security Considerations
+# Security Considerations
 
 **Two evaluations, two failure modes.** A deployment that implements this profile but evaluates only one
 quantity has a gap it may not perceive, because each evaluation returns a confident answer to a different
@@ -279,9 +252,7 @@ control. A KTP revision may alter the structures profiled here without notice. I
 **SHOULD** pin the KTP revision they were built against and **MUST NOT** assume this profile remains
 accurate across KTP versions. See Section 9.
 
----
-
-## 8. Attribution and IPR
+# Attribution and IPR
 
 The Kinetic Trust Protocol is the work of **Chris Perkins**, New Mexico Cyber Intelligence & Threat
 Response Alliance, published under the Apache License, Version 2.0 at
@@ -296,9 +267,7 @@ publication as an independent profile with KTP as a normative reference and expl
 Filing without that contact is not appropriate for a document whose subject is another author's
 specification.
 
----
-
-## 9. Open Items
+# Open Items
 
 1. **Verify every structural claim against the KTP full text.** This profile was written against the
    rendered documentation pages, not the authoritative specifications in the repository's `rfcs-txt/`
@@ -315,8 +284,6 @@ specification.
 5. Decide whether tier thresholds should be restated here. {{KTP-ENFORCE}} publishes them and
    {{KTP-CORE}} does not; restating them would duplicate a value that may change.
 
----
-
-## 10. IANA Considerations
+# IANA Considerations
 
 This document requests no IANA actions. It profiles existing registries and defines no new values.

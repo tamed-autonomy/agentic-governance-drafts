@@ -54,16 +54,6 @@ informative:
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-identity/
     date: 2026
 ---
-
-# Authority Attenuation Predicates for Delegation Chains
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-**Renamed** from *Delegation Lineage Records* — see Section 1.2.
-
----
-
-## Abstract
-
 Autonomous agents delegate to other agents, which delegate further. Where a delegation chain exists,
 each hop should narrow the authority available to the delegate. Existing capability systems enforce
 attenuation cryptographically but leave the meaning of each narrowing application-defined, so an
@@ -78,9 +68,7 @@ trust model, and its predicates are intended to be carried in whatever append-on
 already operates. A minimal chain binding is provided (Section 4.2) so the document is implementable on
 its own.
 
----
-
-## 1. Introduction
+# Introduction
 
 Token exchange {{RFC8693}} narrows a credential across an exchange but produces no evaluable record of
 the delegation relationship. Capability systems — macaroons and their successors — carry attenuation in
@@ -93,7 +81,7 @@ each other's attenuations. The envelope is standardized; the predicates inside i
 
 This document standardizes the predicates.
 
-### 1.1 Scope: authority, not trust
+## Scope: authority, not trust
 
 Delegation chains carry two distinct quantities that are easily conflated:
 
@@ -114,7 +102,7 @@ from a trust quantity or trust from an attenuation predicate.
 {{I-D.martherus-ktp-profile}} binds this document to one such trust model. It is informative here: nothing
 in this specification requires it, and an implementation conforming to this document alone is complete.
 
-### 1.2 Renamed from "delegation lineage"
+## Renamed from "delegation lineage"
 
 An earlier revision of this document was titled *Delegation Lineage Records* and defined a chain format
 of its own. That scope overlapped KTP-Identity's trajectory chains, which already specify append-only
@@ -125,9 +113,7 @@ contribution; the predicate vocabulary is. The title now says so.
 training attestation — KTP-Provenance, for instance, concerns training data consent and knowledge debt,
 an unrelated subject.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -145,7 +131,7 @@ described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in 
 
 **Root:** The origin of a chain, holding authority not derived from a prior hop.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 The following terms are used consistently across this document set. Each document defines its own
 *consequences*; the terms themselves mean the same thing everywhere.
@@ -161,9 +147,7 @@ The following terms are used consistently across this document set. Each documen
 `unavailable` **MUST NOT** be reported or treated as `absent`. A system that treats an unreachable
 component as silent can be attacked by making it unreachable.
 
----
-
-## 3. What This Document Is Not
+# What This Document Is Not
 
 Stated prominently because the shape invites misreading.
 
@@ -179,14 +163,12 @@ key by anyone holding it.
 Deployments requiring third-party verifiable non-equivocation over chains may use SCITT {{RFC9943}} as a
 transparency substrate. That is an optional deployment choice, not a dependency. See Section 11.
 
----
-
-## 4. Carriage
+# Carriage
 
 This document defines predicates, not a chain. Predicates are carried in a chain record's attenuation
 field.
 
-### 4.1 Binding to an existing chain
+## Binding to an existing chain
 
 Where a deployment already operates a delegation chain, the attenuation set is carried in that chain's
 records. A binding **MUST** specify which field carries the set and **MUST** preserve the ordering and
@@ -195,7 +177,7 @@ hash-linking properties Section 6 requires.
 One such binding — to KTP-Identity trajectory chains — is defined in {{I-D.martherus-ktp-profile}}.
 Others may be defined by any specification meeting the requirements of this section.
 
-### 4.2 Minimal standalone binding
+## Minimal standalone binding
 
 For deployments without an existing chain, this document defines a minimal hop record so that it can be
 implemented without adopting another specification.
@@ -214,7 +196,7 @@ implemented without adopting another specification.
 
 Records are JSON {{RFC8259}} or CBOR {{RFC8949}}.
 
-### 4.3 Signatures
+## Signatures
 
 A hop record **MUST** be signed by the delegator.
 
@@ -235,9 +217,7 @@ after its early hops were minted; implementations **SHOULD** support post-quantu
 registered, and **SHOULD** support counter-signing an existing record with a newer algorithm without
 altering the original record or its hash.
 
----
-
-## 5. Attenuation Predicates
+# Attenuation Predicates
 
 The registered vocabulary is the contribution of this document.
 
@@ -256,7 +236,7 @@ Integer-valued predicates narrow by non-increase.
 `action_class` is the same concept named identically in {{I-D.martherus-normative-constraint}} and
 {{I-D.martherus-intent-scope}}. A deployment **MUST** use one action-class taxonomy across all three.
 
-### 5.1 Monotonicity
+## Monotonicity
 
 Authority **MUST** be non-increasing along a chain. For every predicate present at depth *n*, the value
 at depth *n+1* **MUST** be equal or narrower.
@@ -264,7 +244,7 @@ at depth *n+1* **MUST** be equal or narrower.
 A verifier **MUST** reject a chain in which any predicate widens, regardless of signature validity. A
 correctly signed widening hop is a correctly signed privilege escalation.
 
-### 5.2 Strict attenuation
+## Strict attenuation
 
 A deployment **MAY** require *strict* attenuation: that at least one predicate strictly narrow at each
 hop, rather than merely not widening.
@@ -275,7 +255,7 @@ chain of unchanged hops is a credential copy with extra steps.
 Strict attenuation is expressed by the governing intent declaration; see
 {{I-D.martherus-intent-scope}}. This document defines the predicate semantics that make it checkable.
 
-### 5.3 Fanout requires enumeration
+## Fanout requires enumeration
 
 `fanout` bounds a delegator's direct delegates. It is the predicate that makes the
 many-children-at-full-authority pattern refusable rather than merely describable.
@@ -288,9 +268,7 @@ treating it as satisfied. Deployments relying on fanout limits **MUST** provide 
 {{I-D.martherus-claim-resolution}} defines one suitable form. Absent such a mechanism, `fanout` is
 advisory and **MUST** be documented as such.
 
----
-
-## 6. Verification
+# Verification
 
 A verifier presented with a chain **MUST**:
 
@@ -309,9 +287,7 @@ whatever that hop claims about authority the delegator may never have held.
 Where the full chain cannot be obtained, the verifier **MUST** report the chain as `unavailable` (Section
 2.1) and **MUST NOT** evaluate the action as authorized on the portion it holds.
 
----
-
-## 7. Revocation
+# Revocation
 
 **Revocation in delegated capability systems is a known unsolved problem, and this document does not
 solve it.** Stated plainly because a specification implying otherwise is worse than one that omits the
@@ -339,9 +315,7 @@ denial-of-service into a privilege grant.
 *(An `epoch` method — revocation by advancing a shared epoch value — was described in an earlier revision
 without specification and has been removed. It may return if specified properly.)*
 
----
-
-## 8. Relationship to Prior Work
+# Relationship to Prior Work
 
 **Capability systems.** Macaroons and successors establish that attenuation belongs in the credential and
 is enforceable without issuer consultation. This document adopts that model and supplies what those
@@ -362,9 +336,7 @@ relationship.
 transparency guarantees. The subject differs — artifacts rather than principals — but the machinery
 applies to hop records. See Section 11.
 
----
-
-## 9. Security Considerations
+# Security Considerations
 
 **Signature validity does not imply authority.** Section 6's requirement to evaluate to the root is the
 central control. A correctly signed hop asserting broad authority proves only that its signer asserted
@@ -393,9 +365,7 @@ migration support; deployments **SHOULD** counter-sign historical records before
 algorithms that signed them, and **MUST** distinguish `unavailable` from `invalid` in records and
 decisions (Section 2.1).
 
----
-
-## 10. Privacy Considerations
+# Privacy Considerations
 
 A chain discloses organizational structure: which systems delegate to which, at what depth and scale. A
 complete chain set maps an operator's automation topology.
@@ -407,9 +377,7 @@ requires only the composed authority and not the identities.
 Where chains are transparency-logged, the disclosure is permanent and public. Deployments should
 evaluate that consequence before adopting a transparency substrate.
 
----
-
-## 11. Open Items
+# Open Items
 
 **The SCITT boundary.** SCITT {{RFC9943}} overlaps Sections 4 and 6. Three positions are possible:
 hop records are SCITT statements and this document defines only the payload; hop records are independent
@@ -432,9 +400,7 @@ worth citing, since Section 9's central caution is that a valid signature does n
    attribution question — but the *framing* of Section 1.1 is still informed by that reading. Confirm it
    is a fair characterization before submission.
 
----
-
-## 12. IANA Considerations
+# IANA Considerations
 
 This document requests creation of two registries.
 
@@ -448,7 +414,7 @@ constraint engine may express as well as what a delegation hop may narrow.
 **Authority Attenuation Revocation Methods** — initial values `none`, `endpoint`, `short_lived`.
 Registration policy: Specification Required.
 
-### Registration template
+## Registration template
 
 Each registration **MUST** supply:
 
@@ -462,7 +428,7 @@ Each registration **MUST** supply:
 | Change controller | The party who may modify or deprecate the registration |
 | Contact | Email address for questions |
 
-### Designated expert guidance
+## Designated expert guidance
 
 The designated expert **SHOULD** approve a predicate registration only where the proposed dimension
 admits a well-defined narrowing relation — a predicate that cannot be shown to narrow monotonically
@@ -471,7 +437,7 @@ predicates that describe operational configuration rather than authority, and **
 predicate expressing a trust or standing quantity: this registry governs what a delegate may do, not how
 much it is trusted.
 
-### Media types
+## Media types
 
 `application/attenuated-hop+json` and `application/attenuated-hop+cbor`, registered per {{RFC6838}} with
 this document as the specification and the author as change controller.

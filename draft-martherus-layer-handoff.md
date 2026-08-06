@@ -47,20 +47,6 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
-
-# Cooperative Enforcement and Decision Composition for Autonomous Agents
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-
-⚠️ **This document is not standalone.** It takes a normative dependency on
-{{I-D.martherus-normative-constraint}} for the decision vocabulary (Section 3), the decision registry
-(Section 10), and the crypto-agility requirements (Section 4). The `stand_alone` flag in the frontmatter
-governs kramdown reference handling, not editorial independence.
-
----
-
-## Abstract
-
 Authorization for autonomous agents is increasingly evaluated by more than one specialized component:
 identity, behavioral analysis, declared-purpose scope, trust history, and contextual constraint each
 reach independent conclusions about the same proposed action. No specification defines how those
@@ -70,9 +56,7 @@ This document defines a composition protocol for independent policy enforcement 
 decision contributions a participant may make, how contributions compose, and the record that attests
 the composed outcome. It does not define any participant's internal logic.
 
----
-
-## 1. Introduction
+# Introduction
 
 The OpenID Foundation's AuthZEN Authorization API 1.0 (Final) defines the interface between one policy
 enforcement point and one policy decision point. Its Access Evaluations API supports batched evaluation
@@ -92,7 +76,7 @@ the decision is recorded.
 
 This document specifies the alternative.
 
-### 1.1 Relationship to single-PDP interfaces
+## Relationship to single-PDP interfaces
 
 This specification composes *above* AuthZEN, not instead of it. A participant in a composition chain
 **MAY** expose an AuthZEN-conformant interface, and a composition coordinator **MAY** invoke participants
@@ -100,7 +84,7 @@ through it. Nothing here requires replacing an existing PDP interface.
 
 Section 5.3 states the required relationship to AuthZEN's batching semantics.
 
-### 1.2 What this document does not do
+## What this document does not do
 
 It does not define what any participant evaluates, how, or with what model. Participants compete on
 detection quality, policy expressiveness, and performance. This document defines only the contract
@@ -108,9 +92,7 @@ between them.
 
 It does not define a central policy engine, and it deliberately does not permit one. See Section 8.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -129,7 +111,7 @@ it.
 **Layer:** A named evaluative concern — `identity`, `behavior`, `intent`, `trust`, `delegation`,
 `context`. A participant declares the layer or layers it speaks for.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 Used consistently across this document set. Each document defines its own *consequences*; the terms mean
 the same thing everywhere.
@@ -145,9 +127,7 @@ the same thing everywhere.
 `unavailable` **MUST NOT** be reported or treated as `absent`. Section 6.2 defines this document's
 consequence for an unavailable participant.
 
----
-
-## 3. Contribution Types
+# Contribution Types
 
 A participant contributes one of the following. These extend the decision vocabulary of
 {{I-D.martherus-normative-constraint}} Section 6 with two non-decisional contributions.
@@ -163,7 +143,7 @@ A participant contributes one of the following. These extend the decision vocabu
 | `annotate` | No effect on the decision; attaches a typed observation for other participants |
 | `abstain` | The participant asserts no opinion (Section 3.2) |
 
-### 3.1 Annotation
+## Annotation
 
 `annotate` exists because specialization is only useful if participants can inform each other. An intent
 evaluator concluding that an action is "narrowly outside declared scope" may not wish to deny it, but a
@@ -176,7 +156,7 @@ decision influenced by an annotation is auditable.
 Annotations are not trust observations. A trust observation is a durable claim about a subject intended
 for reuse; an annotation is scoped to one action. See {{I-D.martherus-trust-observation}}.
 
-### 3.2 Abstention and non-participation
+## Abstention and non-participation
 
 `abstain` means the participant evaluated and has no opinion. It is distinct from failing to respond.
 
@@ -187,9 +167,7 @@ participants affect the composed decision.
 The distinction is load-bearing: a system that silently treats an unreachable denier as permissive can be
 attacked by making it unreachable.
 
----
-
-## 4. Composition Record
+# Composition Record
 
 A composition record is a JSON {{RFC8259}} or CBOR {{RFC8949}} object.
 
@@ -235,9 +213,7 @@ contribution is detectable by anyone holding the record.
 Records **MUST** be signed with JOSE {{RFC7515}} or COSE {{RFC9052}}, carry explicit algorithm
 identifiers, and support algorithm migration. See {{I-D.martherus-normative-constraint}} Section 7.1.
 
----
-
-### 4.1 Action reference
+## Action reference
 
 Records produced by this specification correlate with records produced by companion specifications for
 the same action. Correlation uses the `trace-id` of W3C Trace Context {{W3C.trace-context}}.
@@ -251,20 +227,20 @@ emitted by the telemetry infrastructure these enforcement points run inside, and
 auditor can join a constraint evaluation, an intent comparison, and a composition record for one action
 without any of the three specifications depending on the others.
 
-## 5. Protocol
+# Protocol
 
-### 5.1 Solicitation
+## Solicitation
 
 The coordinator sends the action description to each participant registered for the action's class. The
 coordinator **MUST** send the same action description to every participant. Sending divergent
 descriptions to different participants defeats the audit property of the composition record.
 
-### 5.2 Deadlines
+## Deadlines
 
 The coordinator **MUST** apply a deadline to each participant and **MUST** record any participant that
 misses it as `unavailable`.
 
-### 5.3 Relationship to AuthZEN batching
+## Relationship to AuthZEN batching
 
 Where a coordinator invokes participants through AuthZEN's Access Evaluations API, the composition
 policy of Section 6 governs the outcome, and the AuthZEN batching semantics govern only transport
@@ -275,11 +251,9 @@ deny-dominant. `permit_on_first_permit` **MUST NOT** be used, because it termina
 participants that would have denied are consulted. Implementations **MUST NOT** treat
 `permit_on_first_permit` as a valid composition policy.
 
----
+# Composition
 
-## 6. Composition
-
-### 6.1 Default policy: most-restrictive-wins
+## Default policy: most-restrictive-wins
 
 The composed decision is the most restrictive contribution received, ordered:
 
@@ -291,7 +265,7 @@ deny > step_up > defer > narrow_scope > allow_with_logging > allow
 
 Where multiple `narrow_scope` contributions are received, the composed scope is the intersection.
 
-### 6.2 Unavailable participants
+## Unavailable participants
 
 The composition policy **MUST** declare, per layer, whether unavailability is `fail_closed` or
 `fail_open`.
@@ -308,7 +282,7 @@ A deployment **MAY** configure `fail_open` for a specific layer. Where it does, 
 **MUST** record `degraded: true` and name the layer. A composed `allow` reached because a participant was
 unreachable **MUST NOT** be indistinguishable from one reached with full participation.
 
-### 6.3 No overrides
+## No overrides
 
 A participant **MUST NOT** be able to override another participant's more restrictive contribution.
 
@@ -320,14 +294,12 @@ This is the single most important rule in this document. A composition layer tha
 central policy engine wearing a different name, and it reintroduces exactly the property that made
 specialization necessary.
 
-### 6.4 Alternative policies
+## Alternative policies
 
 A composition policy other than Section 6.1 **MAY** be defined and **MUST** be identified in the `policy`
 member of the composition record. Any alternative policy **MUST** preserve Section 6.3.
 
----
-
-## 7. Relationship to Prior Work
+# Relationship to Prior Work
 
 The argument that authorization should be decomposed into cooperating components is not new. Policy
 frameworks of the 2000s separated decision, enforcement, information, and administration points, and that
@@ -342,9 +314,7 @@ Trust-management systems addressed distributed authority through delegation of a
 common root. This document does not assume a common root, because in the deployment case there is none:
 the identity vendor and the behavioral detection vendor do not derive authority from each other.
 
----
-
-## 8. Security Considerations
+# Security Considerations
 
 **The coordinator is not a decision maker, and must not become one.** A coordinator with evaluative
 authority is a single point of policy compromise and reintroduces the monolithic PDP. Section 6.3 forbids
@@ -377,18 +347,14 @@ solely on a chain the requesting party can decline to enter.
 topology. Coordinators **SHOULD** return to each participant only its own contribution and the composed
 outcome, and **SHOULD** restrict full composition records to audit consumers.
 
----
-
-## 9. Privacy Considerations
+# Privacy Considerations
 
 A composition record aggregates the conclusions of several evaluators about one action, and is therefore
 more revealing than any single contribution. Records **SHOULD** be retained by the relying party rather
 than distributed to participants, and participants **SHOULD NOT** receive contributions from layers
 outside their concern.
 
----
-
-## 10. IANA Considerations
+# IANA Considerations
 
 This document requests creation of one registry.
 
@@ -402,7 +368,7 @@ another to a coordinator is the failure this document exists to prevent. The two
 contributions, `annotate` and `abstain`, are closed by construction — a participant either says something
 without deciding, or says nothing.
 
-### Registration template
+## Registration template
 
 Each registration **MUST** supply:
 
@@ -414,7 +380,7 @@ Each registration **MUST** supply:
 | Change controller | The party who may modify or deprecate the registration |
 | Contact | Email address for questions |
 
-### Designated expert guidance
+## Designated expert guidance
 
 The designated expert **SHOULD** approve a registration when the value names a genuinely distinct concept
 whose meaning is unambiguous from the supplied description, and **SHOULD** reject one that is a synonym
@@ -422,14 +388,12 @@ of an existing value, a deployment-local policy knob, or a value whose semantics
 vendor's implementation. Where a proposed value overlaps an existing one, the expert **SHOULD** ask
 whether extending the existing description would serve as well.
 
-### Media types
+## Media types
 
 `application/composition-record+json` and `application/composition-record+cbor`, registered per
 {{RFC6838}} with this document as the specification and the author as change controller.
 
----
-
-## 11. Open Items
+# Open Items
 
 1. ~~Verify the AuthZEN Access Evaluations API batching semantics~~ — **verified 2026-08-05** against
    Authorization API 1.0 Final (11 January 2026), Section 7.1.2.1. `execute_all` (default) processes all

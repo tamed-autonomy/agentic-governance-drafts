@@ -46,15 +46,6 @@ informative:
       - ins: R. Martherus
     date: 2026
 ---
-
-# Portable Trust Observations for Autonomous Agents
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-
----
-
-## Abstract
-
 Systems that evaluate autonomous agents increasingly compute a notion of trust from behavioral history.
 Those computations are proprietary, their inputs are not portable, and their outputs are scalar scores
 whose meaning does not survive leaving the system that produced them.
@@ -64,15 +55,13 @@ named observer about a named subject over a stated window. It deliberately does 
 a scoring algorithm, or a portable reputation value. A relying party computes its own conclusions from
 observations it chooses to accept, relative to its own trust root.
 
----
-
-## 1. Introduction
+# Introduction
 
 The intuition behind portable trust is that an agent which has behaved well under one party's
 observation should not arrive at the next party with no history. The intuition is sound. The obvious
 implementation — a portable trust score — is not available, and this document does not attempt it.
 
-### 1.1 Why not a score
+## Why not a score
 
 Cheng and Friedman established that no symmetric reputation function is sybilproof: for any reputation
 function meeting reasonable symmetry conditions, an adversary can manufacture identities to obtain an
@@ -98,7 +87,7 @@ These three results jointly determine this document's design:
 3. **Issuer accountability is in the format.** Every observation names its observer and is signed
    (Section 4). An observation that proves wrong is attributable to the party that made it.
 
-### 1.2 What is standardized
+## What is standardized
 
 The division is: **compete on how you compute, standardize what you emit.**
 
@@ -106,7 +95,7 @@ A behavioral detection vendor's model is its product. The statement "this subjec
 declared scope for fourteen consecutive days, observed at this enforcement point, by this method" is not
 a product — it is an input that every other layer needs and that no other layer can currently consume.
 
-### 1.3 Relationship to remote attestation
+## Relationship to remote attestation
 
 RATS {{RFC9334}} defines an architecture for evidence about a system's composition and state, appraised
 against policy to produce attestation results. Trust observations are complementary and distinct: RATS
@@ -115,9 +104,7 @@ evidence concerns *what a system is*; a trust observation concerns *what a subje
 An implementation **MAY** carry attestation results as an observation input, and Section 5.5 defines an
 observation type for that purpose. This document does not redefine attestation.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -134,7 +121,7 @@ each. Local to the relying party. Not portable.
 
 **Window:** The bounded time interval an observation covers.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 Used consistently across this document set. Each document defines its own *consequences*; the terms mean
 the same thing everywhere.
@@ -149,9 +136,7 @@ the same thing everywhere.
 
 `unavailable` **MUST NOT** be reported or treated as `absent`.
 
----
-
-## 3. Design Constraints
+# Design Constraints
 
 Stated normatively because implementations have repeatedly violated them.
 
@@ -167,9 +152,7 @@ Stated normatively because implementations have repeatedly violated them.
 The last constraint is the sybilproofness result expressed as a protocol rule. An aggregate that
 circulates becomes a score, and a score that circulates can be manufactured.
 
----
-
-## 4. Observation Object
+# Observation Object
 
 A JSON {{RFC8259}} or CBOR {{RFC8949}} object.
 
@@ -193,7 +176,7 @@ Observations may be consulted years after issuance — an agent's operating hist
 claim whose value increases with age. Implementations **SHOULD** support post-quantum signature
 algorithms as they are registered.
 
-### 4.1 Method
+## Method
 
 `method` states how the observation was produced, at a granularity sufficient for a relying party to
 decide whether to accept it. Initial values:
@@ -208,7 +191,7 @@ decide whether to accept it. Initial values:
 party **MUST NOT** accept a `self_reported` observation as evidence for any property the subject has an
 incentive to misstate.
 
-### 4.2 Expiry
+## Expiry
 
 `expires` is OPTIONAL for an observation held and evaluated locally by the observer that made it, where
 the holder knows its own retention policy.
@@ -221,11 +204,9 @@ Do not confuse the two intervals. `window_start`/`window_end` state the period t
 `expires` states how long the observer *stands behind it*. A relying party **MUST NOT** treat window end
 as expiry — an observation of last month's behavior may remain the observer's current best statement.
 
----
+# Observation Types
 
-## 5. Observation Types
-
-### 5.1 `intent_compliance`
+## `intent_compliance`
 
 Whether the subject's actions remained within a declared scope over the window. `value` is an object with
 `in_scope` and `out_of_scope` counts and an optional `violations` array of references.
@@ -234,7 +215,7 @@ This type is the observable half of the declared-versus-done pair. A purpose dec
 compared against behavior will be falsified at scale; this observation type is how the comparison
 becomes portable. See {{I-D.martherus-intent-scope}}.
 
-### 5.2 `behavior_under_stress`
+## `behavior_under_stress`
 
 The subject's conduct during periods of degraded context, elevated load, resource contention, or partial
 failure. `value` is an object with `stress_episodes`, `deviations`, and an optional characterization.
@@ -242,7 +223,7 @@ failure. `value` is an object with `stress_episodes`, `deviations`, and an optio
 Distinguished from ordinary compliance because conduct under normal conditions is a weak predictor of
 conduct under abnormal ones, and because an adversary can arrange normal conditions.
 
-### 5.3 `sponsor_conduct`
+## `sponsor_conduct`
 
 The observer's assessment of how subjects sponsored by a given sponsor have behaved. `value` names the
 sponsor and carries the observation over its sponsored population.
@@ -271,7 +252,7 @@ it.
 {{I-D.martherus-ktp-profile}} defines one binding, in which the sponsor identifier is a KTP Sponsorship
 Bond's `sponsor_id`. That binding is informative here; nothing in this document requires it.
 
-### 5.4 `anomaly_pressure`
+## `anomaly_pressure`
 
 Frequency and character of anomalous events attributed to the subject over the window, as assessed by
 the observer's own detection. `value` is an object with `events` and an optional `categories` map.
@@ -280,23 +261,21 @@ the observer's own detection. `value` is an object with `events` and an optional
 flagged, and its meaning is inseparable from that observer's detection quality — which is precisely why
 `observer` and `method` are mandatory.
 
-### 5.5 `attestation_result`
+## `attestation_result`
 
 An appraisal result from a remote attestation process {{RFC9334}}. `value` carries the result and the
 appraising entity.
 
-### 5.6 `no_history`
+## `no_history`
 
 An explicit assertion that the observer has no observations of this subject for the stated window.
 
 This type exists because absence of evidence must be expressible. Section 6.2 requires that a relying
 party distinguish "no history" from "good history"; that is only possible if an observer can say so.
 
----
+# Relying Party Behavior
 
-## 6. Relying Party Behavior
-
-### 6.1 Trust root
+## Trust root
 
 A relying party **MUST** maintain an explicit set of accepted observers. Observations from observers
 outside that set **MUST** be treated as `untrusted` (Section 2.1) and **MUST NOT** carry weight.
@@ -309,7 +288,7 @@ A relying party **MUST NOT** derive its trust root transitively from another par
 explicit configuration. Transitive acceptance is how a sybil population enters an otherwise sound trust
 root.
 
-### 6.2 Newcomers
+## Newcomers
 
 A subject for which a relying party holds no accepted observations **MUST NOT** be treated as equivalent
 to a subject with favorable observations.
@@ -319,7 +298,7 @@ held; observations held and favorable; observations held and unfavorable; observ
 
 Collapsing the first into any other is the failure mode that makes cheap identity profitable.
 
-### 6.3 Computation is local
+## Computation is local
 
 This document defines no algorithm for combining observations. A relying party's method for weighting
 observers, discounting age, and reconciling conflicting observations is local policy and out of scope.
@@ -328,9 +307,7 @@ Where a relying party's conclusion is used as an input to a decision, the conclu
 carried as an annotation within a composition record rather than re-emitted as an observation. See
 {{I-D.martherus-layer-handoff}} Section 3.1.
 
----
-
-## 7. Relationship to Prior Work
+# Relationship to Prior Work
 
 Reputation systems have been studied and deployed for three decades. The deployed successes are
 overwhelmingly *closed* systems — a single operator, a single population, a single computation, with the
@@ -345,9 +322,7 @@ Verifiable credential formats supply signed claim carriage and are a plausible a
 Section 4. They do not supply an observation type system, an observer accountability model, or the
 relying-party rules of Section 6, which is the substance of this document.
 
----
-
-## 8. Security Considerations
+# Security Considerations
 
 **Sybil manufacture.** An adversary controlling many identities can generate many observations. The
 defense is not in the format — it is Section 6.1's requirement that relying parties accept only observers
@@ -375,9 +350,7 @@ the subject, and **MUST** treat a subject-presented observation set as incomplet
 rehabilitate a subject. Relying parties **SHOULD** retain the fact that an unfavorable observation existed
 after it expires, even when they cease to weight its content.
 
----
-
-## 9. Privacy Considerations
+# Privacy Considerations
 
 Observations about an agent are frequently observations about the human or organization on whose behalf
 it acts, and an observation set assembled across domains is a behavioral profile.
@@ -390,9 +363,7 @@ Where the subject is an agent acting for a natural person, an assembled observat
 personal data under applicable law even where no single observation does. Deployments should evaluate
 the assembled set before transmitting it across a domain boundary.
 
----
-
-## 10. IANA Considerations
+# IANA Considerations
 
 This document requests creation of two registries.
 
@@ -403,7 +374,7 @@ Specification Required.
 **Trust Observation Methods** — initial values `direct_enforcement`, `log_analysis`, `sampled`,
 `model_inference`, `self_reported`. Registration policy: Specification Required.
 
-### Registration template
+## Registration template
 
 Each registration **MUST** supply:
 
@@ -415,7 +386,7 @@ Each registration **MUST** supply:
 | Change controller | The party who may modify or deprecate the registration |
 | Contact | Email address for questions |
 
-### Designated expert guidance
+## Designated expert guidance
 
 The designated expert **SHOULD** approve a registration when the value names a genuinely distinct concept
 whose meaning is unambiguous from the supplied description, and **SHOULD** reject one that is a synonym
@@ -427,14 +398,12 @@ Additionally, for this document's registries the expert **SHOULD** reject any pr
 whose value is a score, rating, or ranking, however named. Section 3 forbids such values, and a registry
 is the most likely route by which one would re-enter.
 
-### Media types
+## Media types
 
 `application/trust-observation+json` and `application/trust-observation+cbor`, registered per
 {{RFC6838}} with this document as the specification and the author as change controller.
 
----
-
-## 11. Open Items
+# Open Items
 
 1. Decide whether to define a Verifiable Credentials binding as an alternative encoding, or to state
    explicitly that VC carriage is out of scope.

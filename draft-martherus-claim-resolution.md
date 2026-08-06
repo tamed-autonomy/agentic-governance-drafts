@@ -47,16 +47,6 @@ informative:
   RFC7033:
   RFC8414:
 ---
-
-# Claim Resolution Profile for Autonomous Agent Governance
-
-**Status:** Pre-submission working copy. Not filed with the IETF Datatracker.
-**Rescoped** from a standalone resolution protocol to a profile — see Section 1.3.
-
----
-
-## Abstract
-
 An agent's identifier is issued by one authority. The facts a relying party needs about that agent —
 what it was deployed to do, how it has behaved, what authority it holds — originate with several, and
 change on different schedules than the identifier does.
@@ -67,9 +57,7 @@ governance and specifies only what they do not cover: how a role-specific issuer
 how long verification keys must outlive the claims they signed, and what a relying party does when
 issuers disagree.
 
----
-
-## 1. Introduction
+# Introduction
 
 Identity federation solved single-issuer assertion. A relying party learns from one identity provider
 who the subject is, and the assertion carries whatever attributes that provider chose to include.
@@ -84,7 +72,7 @@ Putting all of it in one token means refreshing all of it at the rate of the fas
 accepting that some of it is stale. Neither is acceptable, and the practical result is that relying
 parties consume whatever the token happens to carry and ignore the rest.
 
-### 1.1 What this document reuses
+## What this document reuses
 
 Nothing in the retrieval path is new, and this document invents none of it.
 
@@ -105,7 +93,7 @@ authorization servers. They are parties that sign their own statements, which is
 {{RFC9728}} addresses: *"public keys belonging to the protected resource, such as signing key(s) that
 the resource server uses to sign resource responses."*
 
-### 1.2 What this document adds
+## What this document adds
 
 Three things the reused specifications do not cover:
 
@@ -116,13 +104,13 @@ Three things the reused specifications do not cover:
 3. **Conflict retention** (Section 6). No specification says what to do when two issuers disagree, and
    the common implementation choice — pick one, discard the other — destroys the most useful signal.
 
-### 1.3 Rescoped
+## Rescoped
 
 An earlier revision of this document specified its own discovery, retrieval, key discovery, and
 enumeration mechanisms. Each duplicated a finished specification. The mechanisms are not the
 contribution; the three deltas in Section 1.2 are.
 
-### 1.4 What this document does not define
+## What this document does not define
 
 It defines no claim types. Claims about purpose are specified in {{I-D.martherus-intent-scope}}, about
 behavior in {{I-D.martherus-trust-observation}}, and about delegated authority in
@@ -131,9 +119,7 @@ behavior in {{I-D.martherus-trust-observation}}, and about delegated authority i
 It defines no wire protocol of its own, and a deployment implementing {{OIDF.federation}} and
 {{RFC9728}} conformantly, plus Sections 3, 4, and 6 of this document, is complete.
 
----
-
-## 2. Conventions and Terminology
+# Conventions and Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -147,7 +133,7 @@ described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in 
 
 **Resolution:** Obtaining claim sets from multiple issuers for one subject.
 
-### 2.1 Artifact state vocabulary
+## Artifact state vocabulary
 
 Used consistently across this document set. Each document defines its own *consequences*; the terms mean
 the same thing everywhere.
@@ -163,9 +149,7 @@ the same thing everywhere.
 `unavailable` **MUST NOT** be reported or treated as `absent`. A relying party that treats an unreachable
 issuer as silent can be attacked by making it unreachable.
 
----
-
-## 3. Issuer Roles
+# Issuer Roles
 
 "Issuer" is this document's generic term. Companion specifications name the role according to what the
 claim asserts. An implementation **MUST** treat the role-specific identifier as the issuer identifier for
@@ -189,9 +173,7 @@ explicit configuration. Where {{OIDF.federation}} Trust Chains are used, the fed
 define which entities may be *discovered*; they do not define which roles a relying party accepts an
 entity in.
 
----
-
-## 4. Key Retention
+# Key Retention
 
 Verification keys are published and located per Section 1.1. This section states the one requirement
 those specifications do not.
@@ -214,11 +196,9 @@ Where a key cannot be retrieved, affected claims are `unavailable` — not `inva
 (Section 2.1). The distinction determines whether a relying party retries, alerts, or proceeds without
 the claim.
 
----
+# Retrieval Profile
 
-## 5. Retrieval Profile
-
-### 5.1 The relying party asks; the subject does not present
+## The relying party asks; the subject does not present
 
 A subject permitted to select which issuers are consulted will select favorably. Resolution **MUST** be
 driven by the relying party.
@@ -230,7 +210,7 @@ This is the substantive difference from holder-mediated presentation protocols, 
 a subject disclosing its own credentials. That model is correct for a person presenting a qualification
 and wrong for an enforcement point evaluating an agent.
 
-### 5.2 Expiry
+## Expiry
 
 A claim published for retrieval by another party **MUST** carry an explicit expiry. Companion
 specifications that make expiry optional for locally held artifacts **MUST** treat it as required for
@@ -240,7 +220,7 @@ A relying party **MAY** cache a claim until its stated expiry and **MUST NOT** c
 expiry the claim is `expired`, which is distinct from `absent`: a relying party **SHOULD** retain the
 knowledge that an expired claim existed.
 
-### 5.3 Deadlines
+## Deadlines
 
 Resolution occurs on the decision path, and its latency is a security property: a step slow enough to be
 routinely skipped is a control that is not deployed.
@@ -248,7 +228,7 @@ routinely skipped is a control that is not deployed.
 A relying party **MUST** apply a deadline per issuer and **MUST** record an issuer that misses it as
 `unavailable` rather than as holding no claims.
 
-### 5.4 Enumeration
+## Enumeration
 
 Some evaluations require all claims of a type from one issuer rather than a single claim. The `fanout`
 attenuation predicate is the motivating case: it bounds a delegator's direct delegates and cannot be
@@ -265,9 +245,7 @@ Enumeration discloses an issuer's full delegation or observation activity for a 
 **SHOULD** restrict it to relying parties with a demonstrated need and **SHOULD NOT** offer it
 unauthenticated.
 
----
-
-## 6. Conflict Retention
+# Conflict Retention
 
 Two issuers may hold incompatible claims about one subject.
 
@@ -288,9 +266,7 @@ delegated authority is a fact about the deployment — a misconfiguration, a sta
 compromised issuer — and discarding it to produce a clean answer destroys the most useful signal
 available.
 
----
-
-## 7. Security Considerations
+# Security Considerations
 
 **Discovery is an injection surface.** An attacker able to influence what a discovery mechanism
 advertises can introduce an issuer returning favorable claims. Section 3's requirement that discovered
@@ -319,9 +295,7 @@ on still publish keys covering the oldest claims they hold.
 the subject, and the requested claim types disclose what the relying party's controls examine.
 Deployments handling sensitive subjects **SHOULD** consider whether queries can be batched or padded.
 
----
-
-## 8. Privacy Considerations
+# Privacy Considerations
 
 Resolution assembles a profile that no single issuer holds. That is its purpose and its hazard.
 
@@ -335,18 +309,14 @@ Where the subject acts for a natural person, an assembled claim set may constitu
 where no single claim does. The assembled set, not the individual claims, is the thing deployments
 should evaluate against applicable law.
 
----
-
-## 9. IANA Considerations
+# IANA Considerations
 
 This document requests no new registries.
 
 It profiles existing mechanisms and defines no values requiring registration. The role identifiers in
 Section 3 are drawn from the companion specifications that define them.
 
----
-
-## 10. Open Items
+# Open Items
 
 1. Confirm whether {{OIDF.federation}} Entity Statement metadata can carry a role qualifier (Section 3)
    directly, or whether the per-role accepted-issuer set must be entirely relying-party-side
