@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install toolchain
+        run: |
+          gem install kramdown-rfc
+          pip install xml2rfc
+
+      - name: Check cross-references resolve
+        run: make check
+
+      - name: Build drafts
+        run: make txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drafts
+          path: |
+            *.txt
+            *.xml
