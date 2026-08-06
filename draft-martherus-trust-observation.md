@@ -461,22 +461,17 @@ prohibition; see `earned_standing`.
 
 1. Decide whether to define a Verifiable Credentials binding as an alternative encoding, or to state
    explicitly that VC carriage is out of scope.
-2. ~~`confidence` is under-specified~~ — **removed 2026-08-05.** A bare 0.0–1.0 number whose meaning
-   differed per observer, and the most likely route by which a score-like value would re-enter contrary
-   to Section 3. An observer needing to express uncertainty does so through `method` and `sample_size`,
-   which are interpretable.
-3. ~~Determine whether `sponsorship_stake` belongs here~~ — **resolved.** This document observes sponsor
-   conduct only, keyed by an opaque sponsor identifier (Section 5.3). It defines no sponsorship relation.
-4. Consider whether observers should be required to publish their retention and revocation policy, and
+2. Consider whether observers should be required to publish their retention and revocation policy, and
    whether an observation revocation mechanism is needed or whether `expires` is sufficient.
-5. Confirm the Cheng & Friedman and Friedman & Resnick citations against the primary papers before
+3. Confirm the Cheng & Friedman and Friedman & Resnick citations against the primary papers before
    submission; the characterizations here derive from a secondary survey.
-6. ~~`expires` optional here but required by claim-resolution~~ — **resolved.** Section 4.2 makes
-   `expires` REQUIRED for any observation published for retrieval by another party, and OPTIONAL only
-   for locally held observations. This matches {{I-D.martherus-claim-resolution}} Section 5.2.
-7. ~~Decide whether to define a profile for consuming KTP Trust Proofs~~ — **resolved.** That profile is
-   {{I-D.martherus-ktp-profile}}, which maps Trust Proofs onto this document's observation model and
-   restates the Section 3 prohibition on portable scores. It is informative here; this document is
-   complete without it.
+
+## Considered and excluded
+
+**A `confidence` member.** An observation could carry the observer's stated confidence as a number in
+[0.0, 1.0]. It is excluded because the value means something different for every observer, and because
+it is the most likely route by which a score-like quantity would re-enter contrary to Section 3. An
+observer with something to say about uncertainty says it through `method` and `sample_size`, which are
+interpretable without knowing the observer's internal calibration.
 
 --- back

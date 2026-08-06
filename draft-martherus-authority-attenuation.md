@@ -394,13 +394,10 @@ worth citing, since Section 9's central caution is that a valid signature does n
 **Further:**
 
 1. Verify the macaroon caveat-semantics characterization in Section 1 against the original paper.
-2. ~~Determine whether `rate` belongs in the registry~~ — **removed 2026-08-05.** It was an operational
-   throttle rather than an authority dimension. A deployment needing rate limits applies them as
-   deployment configuration; the registry is Specification Required if the case is ever made.
-3. Decide whether delegate signature (Section 4.3) should be REQUIRED rather than RECOMMENDED. Requiring
+2. Decide whether delegate signature (Section 4.3) should be REQUIRED rather than RECOMMENDED. Requiring
    it forces synchronous delegate participation at mint time; not requiring it lets a delegate plausibly
    deny an attenuation it never accepted.
-4. The scope split in Section 1.1 was arrived at by reading KTP-Identity, not by agreement with its
+3. The scope split in Section 1.1 was arrived at by reading KTP-Identity, not by agreement with its
    author. The dependency now lives entirely in {{I-D.martherus-ktp-profile}}, which carries the
    attribution question — but the *framing* of Section 1.1 is still informed by that reading. Confirm it
    is a fair characterization before submission.

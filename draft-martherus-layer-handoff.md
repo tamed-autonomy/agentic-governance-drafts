@@ -400,24 +400,21 @@ whether extending the existing description would serve as well.
 
 # Open Items
 
-1. ~~Verify the AuthZEN Access Evaluations API batching semantics~~ — **verified 2026-08-05** against
-   Authorization API 1.0 Final (11 January 2026), Section 7.1.2.1. `execute_all` (default) processes all
-   requests independently; `deny_on_first_deny` short-circuits on any denial or error, behaving as
-   logical AND; `permit_on_first_permit` short-circuits on any permit, behaving as logical OR. Sections 1
-   and 5.4 are accurate as written, and the prohibition on `permit_on_first_permit` as a composition
-   policy is correct — it is an OR over participants, which is the inverse of this document's model.
-2. Determine the relationship to AuthZEN's Authorization API Resource Profile (AARP), which the prior-art
+1. Determine the relationship to AuthZEN's Authorization API Resource Profile (AARP), which the prior-art
    survey identifies as colliding with this primitive. AARP may already cover part of Section 5.
-3. Decide whether the coordinator role should be specified as a distinct entity or as a role any
+2. Decide whether the coordinator role should be specified as a distinct entity or as a role any
    participant may assume. The current text assumes a distinct entity.
-4. Determine whether composition records should be transparency-logged, and if so whether SCITT
+3. Determine whether composition records should be transparency-logged, and if so whether SCITT
    {{RFC9943}} is the right substrate. Note that {{I-D.martherus-authority-attenuation}} faces the same
    question for hop records; the two should be answered together or the set will carry two different
    transparency stories.
-5. ~~Two-phase composition may be unnecessary complexity~~ — **removed 2026-08-05.** Composition is
-   single-round. Two-phase evaluation required ordering rules, a no-loosening constraint, and a
-   termination guarantee, for a benefit no deployment had asked for. If participants later prove they
-   need to see each other's annotations before contributing, it returns as an extension with the
-   single-round case unchanged.
+
+## Considered and excluded
+
+**Two-phase composition.** Participants could evaluate in two rounds, seeing each other's annotations
+from the first before contributing in the second. It is excluded because it requires ordering rules, a
+constraint that second-round changes may only tighten, and a termination guarantee — for a benefit no
+deployment has yet needed. Composition is single-round. If participants later prove they need to see
+each other's annotations first, it returns as an extension leaving the single-round case unchanged.
 
 --- back

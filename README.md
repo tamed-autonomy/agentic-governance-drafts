@@ -68,15 +68,14 @@ this document claims no authorship of it.
 It exists so the other six need *no* KTP dependency at all — the binding is isolated in one place, which
 can be evaluated on its own terms and discarded without touching anything else.
 
-Every structural claim in it has been checked against the authoritative `rfcs-txt/` sources rather than
-the rendered documentation — record fields, `sequence` semantics, the Trust Proof claim set, the
-Sponsorship Bond members, the tier thresholds. Those all held.
+Its structural claims are checked against the authoritative `rfcs-txt/` sources — record fields,
+`sequence` semantics, the Trust Proof claim set, the Sponsorship Bond members, the tier thresholds.
 
-**One substantive claim did not.** Section 4.4 originally argued that the sybilproofness result does not
-apply to `E_base` at all. KTP-Core §5.5.5 says peer signals SHOULD contribute 10–20% of it, so part of
-`E_base` *is* within the class that result addresses. Section 4.4 now claims only what survives, and
-raises two questions for the specification's author: where the peer-signal contribution is seated, given
-§5.1's formula already sums to 1.00, and whether sponsor reputation is double-counted between the two
+Its Section 4.4 carries a deliberately bounded claim. `E_base` is predominantly self-earned and so sits
+largely outside the sybilproofness result, but KTP-Core §5.5.5 has peer signals contributing 10–20% of
+it, and those are third-party reports about the subject. The profile claims only what survives that, and
+puts two questions to the specification's author: where the peer-signal contribution is seated, given
+§5.1's formula already sums to 1.00, and whether sponsor reputation is counted twice across the two
 sections. Read the profile as one author's reading of someone else's specification, not as anything
 Perkins has reviewed.
 

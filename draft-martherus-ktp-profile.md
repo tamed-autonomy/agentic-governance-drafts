@@ -216,11 +216,12 @@ how much the oracle is trusted.
 That is precisely the division {{I-D.martherus-trust-observation}} Section 6.3 requires: evidence
 travels, judgment stays local.
 
-## How far the sybilproofness argument actually goes
+## The sybilproofness result and `E_base`
 
 {{I-D.martherus-trust-observation}} Section 3 forbids an observation carrying a value derived from other
 parties' reports about the subject, because no symmetric reputation function over such reports is
-sybilproof. `E_base` is **mostly** outside that prohibition, and the qualifier is load-bearing.
+sybilproof. `E_base` sits **largely** outside that prohibition. The qualifier is load-bearing and this
+section states its limits.
 
 {{KTP-CORE}} Section 5.1 defines:
 
@@ -237,7 +238,7 @@ Crisis attestations that raise it require an Oracle signature and a zone-wide cr
 manufacture its own adversity. That much is genuinely self-earned, and a fabricated identity inherits
 none of it.
 
-**But {{KTP-CORE}} Section 5.5.5 goes further than the formula above.** Under GOODHART-004, *"E_base
+**{{KTP-CORE}} Section 5.5.5 adds a term the formula above does not show.** Under GOODHART-004, *"E_base
 calculation SHOULD incorporate peer signals that the agent cannot directly control"* — co-transaction
 success rate, sponsor reputation, zone endorsements, negative attestations — at a stated weight of
 *"10-20% of E_base."*
@@ -262,10 +263,10 @@ own — a colluding population can transact successfully among itself.
   strength of the above depends on it. At the upper bound of the stated range, combined with the 10%
   sponsor term, up to 30% of `E_base` is relational rather than self-earned.
 
-Two further items are noted for the specification's author rather than resolved here. The Section 5.1
-formula sums to 1.00 with no term for peer signals, so it is not evident where the Section 5.5.5
-contribution is seated. And "sponsor reputation" appears both as a peer signal in 5.5.5 and as the
-separate 10% Sponsor Weight in 5.1, which may be double-counted. See Section 9.
+Two questions follow that belong to the specification rather than to this profile, and are put to its
+author in Section 9. The Section 5.1 formula sums to 1.00 with no term for peer signals, so where the
+Section 5.5.5 contribution is seated is not evident. And "sponsor reputation" appears both as a peer
+signal in 5.5.5 and as the separate 10% Sponsor Weight in 5.1.
 
 ## Newcomer distrust
 
@@ -350,21 +351,12 @@ would both be preferable to independent publication. Neither is a precondition f
 
 # Open Items
 
-1. ~~Verify every structural claim against the KTP full text~~ — **done.** Checked against
-   `rfcs-txt/ktp-core.txt`, `ktp-identity.txt` and `ktp-enforce.txt`. Confirmed: the trajectory-record
-   fields; `sequence(N) == sequence(N-1) + 1` over *all* transaction records, which is what Section 3.1
-   rests on; the Trust Proof claim set; the Sponsorship Bond members (`bond_id`, `sponsor_id`,
-   `sponsored_id`, `stake_percentage`, `stake_amount`), `sponsored_E_base = stake_amount * 0.5`, and the
-   stake-decay relation; and the tier thresholds 95/85/70/50. No structural corrections were needed.
-2. ~~Confirm whether `E_base`'s resilience component is entirely self-earned~~ — **answered, and the
-   answer was partly no.** {{KTP-CORE}} Section 5.1's three terms are self-earned or structural, but
-   Section 5.5.5 (GOODHART-004) states that peer signals SHOULD contribute 10-20% of `E_base`. Section
-   4.4 has been rewritten to claim only what survives that. Two questions remain **for the specification's
-   author**:
-   (a) Section 5.1's formula sums to 1.00 with no peer-signal term — where is the Section 5.5.5
-   contribution seated, and does it displace the others or extend beyond them?
-   (b) "Sponsor reputation" is a peer signal in 5.5.5 and also the separate 10% Sponsor Weight in 5.1.
-   Is that double-counted?
+1. **Where is the Section 5.5.5 peer-signal contribution seated?** {{KTP-CORE}} Section 5.1's formula
+   sums to 1.00 across proof of resilience, lineage and sponsor weight, with no term for peer signals.
+   Section 5.5.5 states that peer signals SHOULD contribute 10-20% of `E_base`. Does that displace the
+   three stated weights, or extend beyond them? Section 4.4's bound depends on the answer.
+2. **Is sponsor reputation counted twice?** It appears as a peer signal in {{KTP-CORE}} Section 5.5.5 and
+   as the separate 10% Sponsor Weight in Section 5.1.
 3. **Determine the normative reference status KTP can actually carry.** As a specification published
    outside a recognized standards body, it may constitute a downward reference requiring justification.
    That question belongs to this document alone — which is why this document exists.

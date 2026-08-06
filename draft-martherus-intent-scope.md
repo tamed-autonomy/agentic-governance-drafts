@@ -383,12 +383,15 @@ author as change controller.
 3. Verify the South et al. characterization against the published paper.
 4. Verify the Section 1.1 and Section 7 results against primary sources — the current text derives from a
    secondary survey. Specifically the EXPSPACE-completeness result, the Kerckhoffs-style obfuscation
-   guarantee, and the minimum-cost deceptive path construction. The worst-case-distinctiveness theorems
-   no longer need verifying: the section that relied on them has been removed (item 5).
-5. ~~Decide whether `detection_latency` belongs in a version 00~~ — **removed 2026-08-05.** Its own third
-   caution was decisive: the computation producing a detection-latency bound is the computation an
-   adversary uses to maximize it, so a declaration member carrying it publishes the adversary's
-   objective function. Bounded detection latency remains a sound idea and a deployment may compute one
-   privately; it is not something a declaration should carry across a trust boundary.
+   guarantee, and the minimum-cost deceptive path construction.
+
+## Considered and excluded
+
+**A declared detection-latency bound.** A declaration could carry a bound on how many actions may precede
+divergence becoming detectable, derived from the goal-recognition-design literature's worst-case
+distinctiveness. It is excluded because the computation producing such a bound is the computation an
+adversary uses to maximise it: a declaration carrying it across a trust boundary publishes the
+adversary's objective function. A deployment may compute one privately; it is not something to
+declare.
 
 --- back

@@ -777,17 +777,10 @@ document as the specification and the author as change controller.
 
 Items requiring resolution before submission:
 
-1. ~~Verify the AuthZEN "Advices and/or Obligations" clause text~~ — **verified 2026-08-05** against
-   Authorization API 1.0 Final (11 January 2026), Section 5.5.1 "Decision Context". Cited in Section 1.
-2. Verify CSA AARM R4 wording and confirm the R2/R3 intent-input requirement as characterized.
-3. ~~Determine whether `escalate` should split~~ — **resolved 2026-08-05.** Split into `step_up` and
-   `defer`; the AARM R4 mapping (Section 6.2) is now one-to-one.
-4. Decide whether evaluation records belong in this document or a companion, given the trajectory and
+1. Verify CSA AARM R4 wording and confirm the R2/R3 intent-input requirement as characterized.
+2. Decide whether evaluation records belong in this document or a companion, given the trajectory and
    provenance draft will define a record format.
-5. Confirm the relationship to AuthZEN's Access Evaluations API batching semantics
-   (`execute_all` / `deny_on_first_deny` / `permit_on_first_permit`) — composition in Section 6.3 must
-   not contradict them.
-6. Reconcile with the reference implementation, which currently implements the structured condition form
+3. Reconcile with the reference implementation, which currently implements the structured condition form
    only and does not implement `reevaluation_triggers`.
 
 --- back
