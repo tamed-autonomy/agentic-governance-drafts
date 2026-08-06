@@ -1,0 +1,23 @@
+The Internet-Drafts in this repository are IETF contributions.
+
+Each draft carries `ipr: trust200902` in its front matter, placing it under the
+IETF Trust Legal Provisions Relating to IETF Documents:
+
+    https://trustee.ietf.org/documents/trust-legal-provisions/
+
+In summary: these documents may be reproduced and distributed, and derivative
+works and translations may be produced, provided the copyright notice and the
+reference to the IETF Trust are preserved. Extracting code components is
+permitted under the Simplified BSD License as set out in the Trust Legal
+Provisions.
+
+Copyright (c) 2026 IETF Trust and the persons identified as authors of the
+individual documents. All rights reserved.
+
+---
+
+The Kinetic Trust Protocol, profiled by draft-martherus-ktp-profile, is the
+work of Chris Perkins / New Mexico Cyber Intelligence & Threat Response
+Alliance and is licensed under the Apache License, Version 2.0. That work is
+not covered by the terms above and no claim is made to it. See
+draft-martherus-ktp-profile.md Section 8.

@@ -1,0 +1,114 @@
+# Agentic Governance Internet-Drafts
+
+Working copies of seven Internet-Drafts specifying interchange formats for the governance of autonomous
+AI agents — the layer above identity and authorization, not a replacement for either.
+
+**Status: pre-submission.** Nothing here has been filed with the IETF Datatracker. This repository exists
+so that a small number of people can argue with the drafts before that happens.
+
+---
+
+## The argument
+
+Agent identity standards are necessary and not sufficient. OAuth and OIDC profiles for agents,
+SPIFFE/SPIRE workload identity, SCIM provisioning, CAEP and Shared Signals carrying non-human
+principals — that is the right floor, and these drafts do not compete with any of it.
+
+But an agent can pass every check on that floor and still be the wrong actor, for the wrong purpose, at
+the wrong moment. The floor answers *who* and *can*. It does not answer *why* and *should*.
+
+What is missing is not a new idea. Normative multi-agent systems research has argued the same thing since
+the late 1990s, and AgenticRei made the argument again in June 2026. What is missing is an
+**interoperability layer**: signed, portable, cross-domain carriage of constructs that already have
+reasoners. Every draft here says so in its Relationship to Prior Work section.
+
+## The drafts
+
+| Draft | Subject | Maturity |
+|---|---|---|
+| [normative-constraint](draft-martherus-normative-constraint.md) | Obligations and prohibitions as a signed interchange format, with a before/during/after evaluation lifecycle | **Highest.** Fills a declared placeholder in AuthZEN 1.0 §5.5.1 |
+| [layer-handoff](draft-martherus-layer-handoff.md) | Composing decisions across independent enforcement points | High. Thinnest prior art of the set |
+| [trust-observation](draft-martherus-trust-observation.md) | Signed, typed observations by named observers — deliberately **not** a portable trust score | High |
+| [intent-scope](draft-martherus-intent-scope.md) | Purpose declarations, and falsification of them | Medium. Reframed around negative results |
+| [authority-attenuation](draft-martherus-authority-attenuation.md) | Predicate vocabulary for how authority narrows across a delegation hop | Medium |
+| [claim-resolution](draft-martherus-claim-resolution.md) | Profile of OpenID Federation / RFC 9728 / SCIM for multi-issuer claims | Low. Mostly a profile; may fold |
+| [ktp-profile](draft-martherus-ktp-profile.md) | Binding the above to the Kinetic Trust Protocol | ⚠️ **See below** |
+
+### ⚠️ On the KTP profile
+
+`draft-martherus-ktp-profile.md` profiles the [Kinetic Trust Protocol](https://nmcitra.github.io/ktp-rfc/),
+which is the work of **Chris Perkins** (New Mexico Cyber Intelligence & Threat Response Alliance),
+published under Apache License 2.0. It is not my specification and this document claims no authorship of
+it.
+
+That document exists so the other six need *no* KTP dependency at all — the binding is isolated in one
+place that can be evaluated on its own terms. It has not yet been discussed with its subject's author.
+**It should not be published, filed, or circulated beyond this repository until that conversation
+happens.** Its own Section 8 says the same.
+
+## What has been done to these
+
+- **Prior-art surveyed** across IETF, OpenID Foundation, NIST, CSA, adjacent protocols, and the academic
+  literature — including the deontic logic, normative-multi-agent-systems, and goal-recognition work that
+  most directly anticipates this. Findings live in the source repository, not here.
+- **Adversarially reviewed twice** for cross-document coherence. Both passes found real contradictions;
+  both sets were fixed.
+- **Reused rather than reinvented** wherever an existing standard covers the need — W3C Trace Context for
+  record correlation, OpenID Federation and RFC 9728 for discovery and keys, SCIM for enumeration, Shared
+  Signals for change propagation. Several mechanisms were deleted from these drafts on discovering they
+  already existed elsewhere.
+- **Trimmed.** Four speculative features were cut rather than shipped hopefully. Each removal is recorded
+  as a struck-through Open Item with its reasoning.
+
+## What is deliberately *not* claimed
+
+These drafts try hard not to overclaim, because the literature is full of governance proposals that did.
+
+- **Intent is not verified.** Verifying an agent's purpose from its observable actions is not achievable
+  against an adversary — there are constructions giving a guaranteed degree of goal ambiguity even when
+  the agent's algorithm is fully known to the observer. What is specified is *falsification with
+  attributable violation*.
+- **Trust is not portable as a score.** No symmetric reputation function is sybilproof. Observations are
+  portable; the judgment is local.
+- **Revocation is not solved.** No delegated-capability system has solved it. These drafts require only
+  that a deployment declare which trade-off it took.
+- **Nothing here is a ledger.** Signed, hash-linked, append-only records held by the parties that produce
+  them. No consensus, no chain of blocks, no token.
+
+## Reviewing
+
+Every draft ends with an **Open Items** section listing what its author already knows is unresolved.
+Starting there is the fastest way to find the soft ground.
+
+The most useful review is the kind that says *this is already solved by X* or *this will not deploy
+because Y*. Several mechanisms have already been deleted from these drafts on exactly that basis, and
+the drafts are better for it.
+
+## Building
+
+Drafts are written in [kramdown-rfc](https://github.com/cabo/kramdown-rfc).
+
+```
+make            # build all drafts to .xml and .txt
+make clean
+```
+
+Requires `kramdown-rfc` and `xml2rfc`:
+
+```
+gem install kramdown-rfc
+pip install xml2rfc
+```
+
+## License
+
+The drafts are IETF contributions and carry `ipr: trust200902`, meaning they are subject to the
+[IETF Trust Legal Provisions](https://trustee.ietf.org/documents/trust-legal-provisions/). See
+[LICENSE](LICENSE).
+
+The Kinetic Trust Protocol, profiled by one of these drafts, is © New Mexico Cyber Intelligence & Threat
+Response Alliance and licensed Apache 2.0. See that draft's Section 8.
+
+## Author
+
+Robin Martherus — robin@martherus.com
