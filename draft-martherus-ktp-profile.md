@@ -161,41 +161,80 @@ attestation as satisfying that requirement.
 
 # Trust Proofs as Trust Observations
 
-A KTP Trust Proof {{KTP-CORE}} is a signed, short-lived assertion by a named Trust Oracle about an
-agent's standing under stated conditions. That is structurally an observation in the sense of
-{{I-D.martherus-trust-observation}}: a named observer, a bounded window, a signed statement.
+A KTP Trust Proof {{KTP-CORE}} is a signed, short-lived assertion by a named Trust Oracle. It carries two
+quantities that behave differently, and a profile that treats it as one artifact gets the portability
+wrong.
 
-A Trust Proof **MAY** be consumed as a trust observation under the following mapping:
+`E_trust = E_base × (1 - R)`. `E_base` is standing the agent has accumulated — resilience history,
+lineage maturity, and a bounded sponsor contribution. `R` is a risk factor derived from the Context
+Tensor: the environment at that enforcement point, at that instant.
+
+**`E_base` is portable. `E_trust` is not.**
+
+## `e_base` as an earned-standing observation
+
+`e_base` is a property of the subject. It was earned by the subject, it does not depend on where the
+subject is now, and it is exactly the portable component that
+{{I-D.martherus-trust-observation}} Section 5.7 defines `earned_standing` for.
+
+An implementation **MAY** emit `e_base` as an `earned_standing` observation under this mapping:
 
 | Observation member | Trust Proof source |
 |---|---|
 | `observer` | The `iss` claim (the issuing oracle) |
 | `subject` | The `sub` claim |
-| `type` | `attestation_result` |
+| `type` | `earned_standing` |
+| `value.magnitude` | The `e_base` claim |
+| `value.scale` | An identifier for the oracle's E_base scale |
+| `value.basis` | Resilience accumulated under KTP's proof-of-resilience model |
 | `window_start` / `window_end` | `iat` and `exp` |
 | `method` | `direct_enforcement` where the oracle observed directly; otherwise `model_inference` |
 | `expires` | `exp` |
 
-## `e_trust` is not a portable trust score
+`value.scale` is mandatory and **MUST NOT** be omitted on the assumption that "KTP E_base" is a single
+scale. Two oracles may weight resilience, lineage, and sponsorship differently within the model's
+proportions, so their magnitudes are not comparable and **MUST NOT** be combined.
 
-{{I-D.martherus-trust-observation}} Section 3 prohibits an observation from carrying a general-purpose
-trust score, on the grounds that no symmetric reputation function is sybilproof.
+A Trust Proof **MAY** additionally be consumed as an `attestation_result` observation where the relying
+party wants the oracle's appraisal rather than the earned component.
 
-A Trust Proof carries `e_trust` on a 0–100 scale. **An implementation consuming Trust Proofs as
-observations MUST NOT treat `e_trust` as a portable trust score.**
+## `e_trust` MUST NOT be carried as an observation
 
-The value is meaningful only relative to the issuing oracle, its Context Tensor, and the environmental
-conditions at the stated instant. Two Trust Proofs from different oracles are not comparable, and an
-implementation **MUST NOT** aggregate `e_trust` values across oracles into a single figure, or re-emit
-any such aggregate as an observation.
+`e_trust` is not a property of the subject. It is the product of the subject's standing and the
+*evaluating party's own environmental conditions* at one instant.
 
-The prohibition in {{I-D.martherus-trust-observation}} Section 3 is not relaxed by this profile.
+An implementation **MUST NOT** emit `e_trust` as an observation of any type, and **MUST NOT** consume a
+received `e_trust` as an input to its own authorization decision.
 
-Note that KTP's model is not straightforwardly subject to the sybilproofness result in the first place:
-`E_trust` is the product of accumulated standing and an environmental risk factor derived from sensor
-input, not a function aggregating reports from other identities. Whether the accumulated-standing
-component is entirely self-earned, and therefore whether the result applies at all, **is an open item**
-(Section 9).
+The reason is not the sybilproofness result — it is simpler and stricter. A relying party consuming
+another party's `e_trust` would be treating someone else's environment as its own: another site's crowd
+density, link saturation, adversarial pressure, and audit posture, silently substituted for the
+conditions actually in force where the action is about to happen. That is a category error regardless of
+how much the oracle is trusted.
+
+`E_trust` is computed locally, from a portable `E_base` and the evaluating party's own Context Tensor.
+That is precisely the division {{I-D.martherus-trust-observation}} Section 6.3 requires: evidence
+travels, judgment stays local.
+
+## Why the sybilproofness result does not bite
+
+{{I-D.martherus-trust-observation}} Section 3 forbids an observation carrying a value derived from other
+parties' reports about the subject, because no symmetric reputation function over such reports is
+sybilproof.
+
+`E_base` is not such a function. Its dominant component is proof of resilience — standing earned by the
+agent itself surviving adversarial conditions — with a bounded contribution from a sponsor who stakes
+something at cost. A manufactured identity inherits none of it and begins at zero. Creating a thousand
+agents costs a thousand times as much, which is dues-paying, not a sybil advantage.
+
+Two residual concerns are real and are handled elsewhere. An oracle that inflates `e_base` is an
+issuer-trust failure, addressed by the relying party's accepted-observer set
+({{I-D.martherus-trust-observation}} Section 6.1), not by this argument. And the sponsor component is
+relational rather than self-earned — it is bounded within the model, and a deployment that raised it
+substantially would weaken the reasoning here.
+
+Whether the resilience component is entirely self-earned in every KTP profile **is an open item**
+(Section 9); the argument in this section depends on it.
 
 ## Newcomer distrust
 
@@ -278,9 +317,11 @@ specification.
    rendered documentation pages, not the authoritative specifications in the repository's `rfcs-txt/`
    directory. Field names, the `sequence` semantics asserted in Section 3.1, the Trust Proof claim set in
    Section 4, and the Sponsorship Bond members in Section 5 all require confirmation against the source.
-2. **Confirm whether `E_base`'s accumulated-standing component is entirely self-earned.** Section 4.1's
-   argument that the sybilproofness result does not apply depends on it. If any component aggregates
-   reports from other identities, the argument fails and the section needs rewriting.
+2. **Confirm whether `E_base`'s resilience component is entirely self-earned.** Section 4.4's argument
+   that the sybilproofness result does not apply depends on it. If any part of it aggregates reports from
+   other identities rather than measuring the agent's own survival, the argument fails and both that
+   section and the `earned_standing` mapping in Section 4.1 need rewriting. Confirm also the proportions
+   — the argument tolerates a bounded sponsor contribution and would not survive an unbounded one.
 3. **Determine the normative reference status KTP can actually carry.** As a specification published
    outside a recognized standards body, it may constitute a downward reference requiring justification.
    That question belongs to this document alone — which is why this document exists.

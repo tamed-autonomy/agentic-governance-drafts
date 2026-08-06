@@ -85,8 +85,10 @@ cover.
 These three results jointly determine this document's design:
 
 1. **No global score.** Trust is computed by a relying party, relative to its own trust root, from
-   observations it has decided to accept. There is no portable trust value and this specification defines
-   none.
+   observations it has decided to accept. This specification defines no global trust value, and no
+   observation may carry one derived from other parties' reports about the subject. What an observer may
+   report is its own measurement — including, where a trust model produces one, a scalar measure of what
+   the subject has itself earned (Section 5.7). The distinction is drawn in Section 3.
 2. **Newcomer distrust is a designed property.** An agent with no observations is not "neutral." Section
    6.2 requires that absence of history be representable and distinguishable from good history.
 3. **Issuer accountability is in the format.** Every observation names its observer and is signed
@@ -145,7 +147,7 @@ the same thing everywhere.
 
 Stated normatively because implementations have repeatedly violated them.
 
-- An observation **MUST NOT** carry a general-purpose trust score, rating, or reputation value.
+- An observation **MUST NOT** carry a value derived from other parties' reports about the subject.
 - An observation **MUST** name its observer.
 - An observation **MUST** state the window it covers.
 - An observation **MUST** state the method by which it was produced.
@@ -154,8 +156,28 @@ Stated normatively because implementations have repeatedly violated them.
 - A relying party **MUST NOT** aggregate observations from distinct observers into a single value that is
   then re-emitted as an observation. Aggregation is a local computation and its output is not portable.
 
-The last constraint is the sybilproofness result expressed as a protocol rule. An aggregate that
+## What is and is not forbidden
+
+The first and last constraints are the sybilproofness result expressed as protocol rules, and the line
+they draw is narrower than "no numbers."
+
+**Forbidden: a value aggregating what other parties say about the subject.** That is a reputation
+function in the sense the impossibility result addresses. An adversary who can manufacture identities can
+manufacture the reports that feed it, and no symmetry-preserving function resists that. An aggregate that
 circulates becomes a score, and a score that circulates can be manufactured.
+
+**Permitted: one named observer's measurement of what the subject itself has demonstrably done or
+endured.** That is not a reputation function. It reports the observer's own observation of the subject,
+and a manufactured identity inherits none of it — a newly created agent starts with nothing and must
+accumulate its own, at the same cost as any other. Standing up a thousand identities costs a thousand
+times as much, which is dues-paying rather than a sybil advantage, and dues-paying is the one equilibrium
+that outperforms distrusting newcomers where identity is cheap.
+
+Such a value may be a scalar. `earned_standing` (Section 5.7) is the type for it.
+
+Two constraints follow and are not relaxed. The value remains meaningful only relative to its observer
+and that observer's method, so two observers' figures are **not** comparable and **MUST NOT** be
+combined; and it is evidence a relying party weighs, never a conclusion it inherits.
 
 # Observation Object
 
@@ -271,6 +293,30 @@ flagged, and its meaning is inseparable from that observer's detection quality �
 An appraisal result from a remote attestation process {{RFC9334}}. `value` carries the result and the
 appraising entity.
 
+## `earned_standing`
+
+A scalar measure of standing the subject has itself accumulated, as computed by the observer. `value` is
+an object carrying `magnitude`, the observer's `scale` identifier, and the `basis` on which it was
+derived.
+
+This is the type for the portable component of a trust model whose output separates *what the subject has
+earned* from *what current conditions permit*. The earned component is a property of the subject and
+travels with it. The conditional component is computed from the evaluating party's own environment and
+does not travel — a receiving party consuming another party's conditional figure would be treating
+someone else's circumstances as its own.
+
+An `earned_standing` observation **MUST NOT** be derived from other parties' reports about the subject
+(Section 3). It reports what the observer measured the subject to have withstood, completed, or
+maintained.
+
+`scale` is mandatory because magnitudes from different observers are not comparable. A relying party
+**MUST NOT** compare or combine `earned_standing` magnitudes across observers, or across scales from one
+observer, and **MUST NOT** treat a magnitude as meaningful without the scale that defines it.
+
+`basis` states what was measured — survival under adversarial conditions, volume of completed in-scope
+operations, duration of continuous compliant operation. A relying party unable to interpret a `basis`
+**MUST** treat the observation as `untrusted` rather than substituting a default reading.
+
 ## `no_history`
 
 An explicit assertion that the observer has no observations of this subject for the stated window.
@@ -373,7 +419,8 @@ the assembled set before transmitting it across a domain boundary.
 This document requests creation of two registries.
 
 **Trust Observation Types** — initial values `intent_compliance`, `behavior_under_stress`,
-`sponsor_conduct`, `anomaly_pressure`, `attestation_result`, `no_history`. Registration policy:
+`sponsor_conduct`, `anomaly_pressure`, `attestation_result`, `earned_standing`, `no_history`.
+Registration policy:
 Specification Required.
 
 **Trust Observation Methods** — initial values `direct_enforcement`, `log_analysis`, `sampled`,
@@ -400,8 +447,10 @@ vendor's implementation. Where a proposed value overlaps an existing one, the ex
 whether extending the existing description would serve as well.
 
 Additionally, for this document's registries the expert **SHOULD** reject any proposed observation type
-whose value is a score, rating, or ranking, however named. Section 3 forbids such values, and a registry
-is the most likely route by which one would re-enter.
+whose value aggregates other parties' reports about the subject, however named — Section 3 forbids such
+values and a registry is the most likely route by which one would re-enter. A type whose value is a
+scalar measurement by the registering observer of the subject's own conduct is **not** within that
+prohibition; see `earned_standing`.
 
 ## Media types
 
