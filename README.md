@@ -28,25 +28,7 @@ The floor is finished and deployed. It answers **who** an agent is and **can** i
 It does not answer **why** the agent is acting or whether it **should** act now — and nothing standard
 sits in that gap, so every vendor fills it privately and no two fill it the same way.
 
-```mermaid
-%%{init: {'flowchart': {'wrappingWidth': 900}}}%%
-flowchart TB
-    Q["<b>Should this action happen?</b><br/><i>this actor · this purpose · this context · right now</i>"]
-
-    M["<b>THE MIDDLE BAND — no shared standard today</b><br/><br/><b>why</b> · intent-scope · authority-attenuation<br/><b>should</b> · normative-constraint<br/><b>character</b> · trust-observation · claim-resolution<br/><b>composition</b> · layer-handoff"]
-
-    F["<b>THE FLOOR — finished standards, reused not replaced</b><br/><br/><b>who</b> · OAuth · OIDC · SPIFFE/SPIRE · SCIM · OpenID Federation<br/><b>can</b> · AuthZEN 1.0 · RAR · token exchange<br/><b>carriage</b> · JOSE/COSE · JWK · RFC 9728 · Trace Context · Shared Signals"]
-
-    Q --> M --> F
-
-    style Q fill:#fffbe6,stroke:#8a6d00,stroke-width:2px
-    style M fill:#eaf2ff,stroke:#1a5fb4,stroke-width:2px
-    style F fill:#f2f2f2,stroke:#666,stroke-width:1px
-```
-
-An agent can satisfy every check on the floor and still be the wrong actor, for the wrong purpose, at the
-wrong moment. That is not a defect in the floor — it is a question the floor was never designed to
-answer.
+![Agentic governance architecture: the question "should this action happen?" sits above a middle band with no shared standard today — why (intent-scope, authority-attenuation), should (normative-constraint), character (trust-observation, claim-resolution), composition (layer-handoff), and result (portable, signed governance artifacts) — which in turn sits on a floor of finished standards, reused not replaced: who (OAuth, OIDC, SPIFFE/SPIRE, SCIM, OpenID Federation), can (AuthZEN 1.0, RAR, Token Exchange), and carriage (JOSE/COSE, JWK, RFC 9728, Trace Context, Shared Signals).](assets/architecture.png)
 
 ### Each draft rests on something finished
 
