@@ -44,7 +44,7 @@ existing specification already covers a need it is profiled rather than restated
 | intent-scope | OAuth RAR (RFC 9396) · token exchange (RFC 8693) · Trace Context |
 | authority-attenuation | token exchange (RFC 8693) · the macaroon lineage · JOSE/COSE |
 | claim-resolution | OpenID Federation 1.0 · RFC 9728 · JWK (RFC 7517) · SCIM query semantics |
-| ktp-profile | Kinetic Trust Protocol — third-party, see below |
+| ktp-profile | Kinetic Trust Protocol at tag `v1.0.1-provenance` — third-party, see below |
 
 ## The drafts
 
@@ -56,28 +56,39 @@ existing specification already covers a need it is profiled rather than restated
 | [intent-scope](draft-martherus-intent-scope.md) | Purpose declarations, and falsification of them | Medium. Reframed around negative results |
 | [authority-attenuation](draft-martherus-authority-attenuation.md) | Predicate vocabulary for how authority narrows across a delegation hop | Medium |
 | [claim-resolution](draft-martherus-claim-resolution.md) | Profile of OpenID Federation / RFC 9728 / SCIM for multi-issuer claims | Low. Mostly a profile; may fold |
-| [ktp-profile](draft-martherus-ktp-profile.md) | Binding the above to the Kinetic Trust Protocol | ⚠️ **See below** |
+| [ktp-profile](draft-martherus-ktp-profile.md) | Binding the above to the Kinetic Trust Protocol | Co-authored with KTP's author; pinned to KTP `v1.0.1-provenance`. See below |
 
-### ⚠️ On the KTP profile
+### On the KTP profile
 
-`draft-martherus-ktp-profile.md` profiles the [Kinetic Trust Protocol](https://nmcitra.github.io/ktp-rfc/),
-the work of **Chris Perkins** (New Mexico Cyber Intelligence & Threat Response Alliance), published under
-Apache License 2.0 and shared here with attribution by mutual agreement. It is not my specification and
-this document claims no authorship of it.
+`draft-martherus-ktp-profile.md` binds these drafts to the
+[Kinetic Trust Protocol](https://nmcitra.github.io/ktp-rfc/), published by the New Mexico Cyber
+Intelligence & Threat Response Alliance under Apache License 2.0 — the work of Chris Perkins and Mike
+Storm. This draft is **co-authored with Chris Perkins**: the seam is joint work and the byline says so.
+Neither party claims authorship of the other's specification.
 
 It exists so the other six need *no* KTP dependency at all — the binding is isolated in one place, which
 can be evaluated on its own terms and discarded without touching anything else.
 
-Its structural claims are checked against the authoritative `rfcs-txt/` sources — record fields,
-`sequence` semantics, the Trust Proof claim set, the Sponsorship Bond members, the tier thresholds.
+It is **pinned to KTP tag `v1.0.1-provenance`**, not to `main`. Every structural claim is checked against
+the authoritative `rfcs-txt/` sources at that tag — record fields, `sequence` semantics, the Trust Proof
+claim set, the Sponsorship Bond members, the tier thresholds.
 
-Its Section 4.4 carries a deliberately bounded claim. `E_base` is predominantly self-earned and so sits
-largely outside the sybilproofness result, but KTP-Core §5.5.5 has peer signals contributing 10–20% of
-it, and those are third-party reports about the subject. The profile claims only what survives that, and
-puts two questions to the specification's author: where the peer-signal contribution is seated, given
-§5.1's formula already sums to 1.00, and whether sponsor reputation is counted twice across the two
-sections. Read the profile as one author's reading of someone else's specification, not as anything
-Perkins has reviewed.
+Its §4.3 decides which parts of `E_base` the sybilproofness result reaches, using **two independent
+tests**: whether a term aggregates what other parties say about the subject, and whether the attesting
+party's own accountability terminates outside the agent-trust graph in a declared number of hops. A term
+must pass both — a ring of agents attesting for one another passes the first and means nothing. The
+resilience and lineage terms sit outside the result; peer signals sit inside it; the sponsor term depends
+on a terminator the published spec does not state. Deployments must therefore declare their peer-signal
+weight and their sponsorship terminator, and a relying party that gets neither falls back to assuming 30%
+of `E_base` is relational.
+
+Reading the specification closely enough to profile it surfaced four defects in KTP-Core §5.1 — a lineage
+term whose prose and formula contradict each other, a sponsorship term that silently vanishes past
+generation 2 (leaving the weights summing to 0.90 and God Mode unreachable for the most mature agent
+class), peer signals with no seat in a formula already summing to 1.00, and sponsor reputation counted
+twice. All four are agreed with KTP's author and will be corrected in a subsequent KTP release rather
+than by amendment under the existing tag. §4.4 records the agreed direction non-normatively; the
+normative text stays pinned to what is published.
 
 ## How these are built
 
@@ -88,8 +99,9 @@ Perkins has reviewed.
   it instead of defining their own: W3C Trace Context for record correlation, OpenID Federation and
   RFC 9728 for discovery and keys, SCIM for enumeration semantics, Shared Signals for change
   propagation.
-- **They record their own soft ground.** Each draft ends with Open Items — including struck-through
-  entries for decisions already made, with the reasoning that settled them.
+- **They record their own soft ground.** Each draft ends with Open Items listing what is still
+  unresolved. Decisions already made are stated as positions in the body, or under "Considered and
+  excluded" where the reasoning is worth keeping — not narrated as revisions.
 - **Shared vocabulary is shared, not duplicated.** The decision values, the artifact state vocabulary,
   and the attenuation predicate registry each have exactly one owning document. `make check` enforces
   that every cross-reference resolves.
@@ -155,6 +167,9 @@ The drafts are IETF contributions and carry `ipr: trust200902`, meaning they are
 The Kinetic Trust Protocol, profiled by one of these drafts, is © New Mexico Cyber Intelligence & Threat
 Response Alliance and licensed Apache 2.0. See that draft's Section 8.
 
-## Author
+## Authors
 
 Robin Martherus — robin@martherus.com
+
+The KTP profile is co-authored with Chris Perkins (New Mexico Cyber Intelligence & Threat Response
+Alliance). The other six drafts are mine alone.

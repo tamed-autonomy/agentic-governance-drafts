@@ -13,8 +13,13 @@ author:
   -
     ins: R. Martherus
     name: Robin Martherus
-    organization: Independent
+    organization: Tamed Autonomy
     email: robin@martherus.com
+  -
+    ins: C. Perkins
+    name: Chris Perkins
+    organization: New Mexico Cyber Intelligence & Threat Response Alliance
+    email: cperkins@nmcitra.org
 normative:
   RFC2119:
   RFC8174:
@@ -29,25 +34,41 @@ normative:
       - ins: R. Martherus
     date: 2026
   KTP-IDENTITY:
-    title: "KTP-Identity: Vector Identity and Trajectory Chains"
+    title: "KTP-Identity: Vector Identity and Trajectory Chains (v1.0.1-provenance)"
     author:
       - ins: C. Perkins
+        org: New Mexico Cyber Intelligence & Threat Response Alliance
+      - ins: M. Storm
         org: New Mexico Cyber Intelligence & Threat Response Alliance
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-identity/
     date: 2026
   KTP-CORE:
-    title: "KTP-Core: Trust Score, Context Tensor, Trust Proof"
+    title: "KTP-Core: Trust Score, Context Tensor, Trust Proof (v1.0.1-provenance)"
     author:
       - ins: C. Perkins
+        org: New Mexico Cyber Intelligence & Threat Response Alliance
+      - ins: M. Storm
         org: New Mexico Cyber Intelligence & Threat Response Alliance
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-core/
     date: 2026
   KTP-ENFORCE:
-    title: "KTP-Enforce"
+    title: "KTP-Enforce (v1.0.1-provenance)"
     author:
       - ins: C. Perkins
         org: New Mexico Cyber Intelligence & Threat Response Alliance
+      - ins: M. Storm
+        org: New Mexico Cyber Intelligence & Threat Response Alliance
     target: https://nmcitra.github.io/ktp-rfc/rfcs/ktp-enforce/
+    date: 2026
+informative:
+  KTP-VERSIONING:
+    title: "KTP Versioning and Release Policy"
+    author:
+      - ins: C. Perkins
+        org: New Mexico Cyber Intelligence & Threat Response Alliance
+      - ins: M. Storm
+        org: New Mexico Cyber Intelligence & Threat Response Alliance
+    target: https://github.com/nmcitra/ktp-rfc/blob/main/VERSIONING.md
     date: 2026
 ---
 
@@ -109,6 +130,26 @@ described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in 
 
 Terms from {{KTP-CORE}} and {{KTP-IDENTITY}} — Trust Proof, trajectory chain, transaction record,
 Sponsorship Bond, `E_base`, `E_trust` — are used as defined there.
+
+## Version pinning
+
+This profile is written against KTP at the tag **`v1.0.1-provenance`**, and every structural claim,
+section reference, and quoted formula in it was checked against the `rfcs-txt/` sources at that tag.
+
+An implementation of this profile **MUST** pin the KTP revision it is built against, and **MUST NOT**
+resolve the references in this document against a branch. `main` is not a version.
+
+Under {{KTP-VERSIONING}}, tags carry the version number, release titles carry the release name, and a
+published tag is never moved or deleted. Anything published under a tag stays published; a retraction is
+issued as a new release rather than as a deletion. That is what makes pinning meaningful here, and it is
+the property this profile depends on rather than any promise of interface stability.
+
+The tag string is **opaque**. `v1.0.1-provenance` carries a descriptive suffix that is not part of a
+general scheme, and an implementation **MUST NOT** parse a KTP tag string to derive ordering,
+compatibility, or a version number.
+
+Section 4.4 records a revision to {{KTP-CORE}} Section 5.1 that is agreed but not yet released. It is
+non-normative and changes nothing about the pin above.
 
 # Carrying Attenuation in a Trajectory Chain
 
@@ -193,10 +234,29 @@ An implementation **MAY** emit `e_base` as an `earned_standing` observation unde
 
 `value.scale` is mandatory and **MUST NOT** be omitted on the assumption that "KTP E_base" is a single
 scale. Two oracles may weight resilience, lineage, and sponsorship differently within the model's
-proportions, so their magnitudes are not comparable and **MUST NOT** be combined.
+proportions, and Section 4.3 requires each deployment to declare its own peer-signal weight, so their
+magnitudes are not comparable and **MUST NOT** be combined.
 
 A Trust Proof **MAY** additionally be consumed as an `attestation_result` observation where the relying
 party wants the oracle's appraisal rather than the earned component.
+
+### `earned_standing` reports performance, not accountability
+
+{{I-D.martherus-trust-observation}} Section 5.7 defines `earned_standing` as an observer's measurement of
+what the subject has demonstrably *done or endured*. The resilience and lineage terms are of that kind.
+An attestation of external accountability is not: it asserts that some party is answerable for the
+subject, which is a different claim about a different thing, and it is unaffected by anything the subject
+has done.
+
+`E_base` is therefore a single scalar of **mixed provenance**, and the mapping above emits it as though
+it were of one kind. Where the accountability-derived portion is small this is a tolerable
+approximation. Under the revised composition of Section 4.4, where an anchor attestation replaces the
+sponsorship term outright, it may not be — a Persistent agent's `E_base` would carry an accountability
+claim in a member typed as a performance measurement.
+
+Until that release is published and the question settled, an implementation emitting `e_base` as
+`earned_standing` **MUST** record the composition it used in `value.basis` rather than the fixed string
+given in the table, so that a relying party can tell what kinds of claim the magnitude combines.
 
 ## `e_trust` MUST NOT be carried as an observation
 
@@ -220,8 +280,32 @@ travels, judgment stays local.
 
 {{I-D.martherus-trust-observation}} Section 3 forbids an observation carrying a value derived from other
 parties' reports about the subject, because no symmetric reputation function over such reports is
-sybilproof. `E_base` sits **largely** outside that prohibition. The qualifier is load-bearing and this
-section states its limits.
+sybilproof. Deciding which parts of `E_base` that reaches requires **two tests, and they are
+independent.** A term must pass both. Neither implies the other, and treating them as one criterion is
+the error this section exists to prevent.
+
+**The aggregation test.** {{I-D.martherus-trust-observation}} Section 3.1 forbids *a value aggregating
+what other parties say about the subject*, and permits *one named observer's measurement of what the
+subject itself has demonstrably done or endured*. The line is aggregation — not the identity of the
+reporting party, and not where that party sits. A single named observer's assertion is not a reputation
+function at all: there is nothing being aggregated, so there is no function for manufactured identities
+to feed.
+
+**The terminator test.** Passing the aggregation test makes a term *admissible*. It does not make it
+*mean anything*. A ring of agents attesting for one another satisfies "one named observer, externally
+accountable, exposed to loss, able to revoke" at every link and conveys no information whatever. A term
+therefore additionally requires that the attesting party's own accountability **terminate, in a finite
+and declared number of hops, outside the agent-trust graph** — in law, in physical custody, or in a
+named human. A chain that merely continues does not terminate.
+
+**A corollary that binds regardless of either test.**
+{{I-D.martherus-trust-observation}} Section 3 also forbids a relying party from aggregating observations
+from distinct observers into a single value that is then re-emitted. Individually admissible attestations
+therefore become inadmissible on combination. A term satisfied by *one* accountable attestation is
+outside the result; the same term computed by combining several attestations is inside it, however
+impeccable each attestor is taken separately.
+
+### Applying the tests to published Section 5.1
 
 {{KTP-CORE}} Section 5.1 defines:
 
@@ -233,40 +317,99 @@ E_base = (PoR_score * 0.70) + (Lineage_cap * 0.20) + (Sponsor_contribution * 0.1
   Sponsor_contribution = Sponsor_E_base * stake_percentage
 ~~~
 
-The 70% term is a measurement of the subject's own activity and survival, and the 20% term is structural.
-Crisis attestations that raise it require an Oracle signature and a zone-wide crisis, so an agent cannot
-manufacture its own adversity. That much is genuinely self-earned, and a fabricated identity inherits
-none of it.
+- **Proof of resilience (70%)** — the issuing oracle's own measurement of the subject's activity and
+  survival. One named observer, nothing aggregated: passes the aggregation test. The oracle is
+  accountable outside the graph: passes the terminator test. Crisis attestations that raise it require an
+  Oracle signature and a zone-wide crisis, so an agent cannot manufacture its own adversity. **Outside
+  the result.** A fabricated identity inherits none of it.
+- **Lineage (20%)** — structural, derived from the subject's own generation. Not a report by any party.
+  **Outside the result.**
+- **Sponsor contribution (10%)** — the sponsor is a single named party staking its own standing, so the
+  aggregation test passes. The terminator test is **not** answered by published Section 5.1: a sponsor
+  may itself be an agent sponsored by an agent, and no bound on sponsorship chain length is stated. A
+  deployment **MUST** declare the terminating authority for its sponsorship chains and the maximum number
+  of hops before termination. Absent that declaration this term is inside the result.
+- **Peer signals ({{KTP-CORE}} Section 5.5.5)** — co-transaction success rate, zone endorsements,
+  negative attestations, aggregated across many parties within the system. Fails the aggregation test.
+  **Inside the result**, and this profile does not claim otherwise.
 
-**{{KTP-CORE}} Section 5.5.5 adds a term the formula above does not show.** Under GOODHART-004, *"E_base
-calculation SHOULD incorporate peer signals that the agent cannot directly control"* — co-transaction
-success rate, sponsor reputation, zone endorsements, negative attestations — at a stated weight of
-*"10-20% of E_base."*
+KTP's own defence of the peer signals is that they are chosen for non-manufacturability by the subject:
+an agent cannot compel others to transact with it, cannot compel a sponsor to stake on it, and cannot
+forge a zone endorsement. That is a real and well-aimed mitigation. It is not the same property as sybil
+resistance, which concerns an adversary controlling *multiple* identities rather than a single agent
+inflating its own — a colluding population can transact successfully among itself.
 
-Those are reports by other parties about the subject. Where a deployment implements GOODHART-004, some of
-`E_base` **is** within the class the impossibility result addresses, and this profile does not claim
-otherwise.
+### The peer-signal weight MUST be declared
 
-KTP's own defence is that the signals are chosen for non-manufacturability by the subject: an agent
-cannot compel others to transact with it, cannot compel a sponsor to stake on it, and cannot forge a zone
-endorsement. That is a real and well-aimed mitigation. It is not the same property as sybil resistance,
-which concerns an adversary controlling *multiple* identities rather than a single agent inflating its
-own — a colluding population can transact successfully among itself.
+{{KTP-CORE}} Section 5.5.5 states that peer signals SHOULD contribute *"10-20% of E_base"*, while the
+Section 5.1 formula sums to 1.00 with no term for them. Under this profile the peer-signal contribution
+is a **distinct term**. It **MUST NOT** be folded into the resilience, lineage, or sponsorship terms, and
+the base terms renormalize in their published proportions to make room for it.
 
-**What this profile therefore claims, and no more:**
+A deployment **MUST** state, in the Trust Proof, the peer-signal weight it applies. This is a MUST rather
+than a SHOULD because it is checkable by the relying party and because every claim in this section
+depends on it.
 
-- `E_base` is predominantly self-earned and is defensible as `earned_standing` under
-  {{I-D.martherus-trust-observation}} Section 5.7.
+Peer signals **MUST** be independent of the base terms. A signal that restates what the composition
+already contains adds weight without adding evidence. Sponsor reputation is such a signal: Section 5.1
+already multiplies by the sponsor's own `E_base`, so "high-trust sponsors are selective" contributes
+nothing the composition has not already counted. It **MUST NOT** be used as a peer signal under this
+profile.
+
+### What this profile claims, and no more
+
+- The self-earned and externally-rooted portions of `E_base` sit outside the impossibility result, and
+  do so **currently** rather than only at issuance.
+- The portion inside the result is the **declared peer-signal weight**. Once declared, that figure is
+  exact and a relying party need not reason about a bound.
+- `E_base` is defensible as `earned_standing` under {{I-D.martherus-trust-observation}} Section 5.7 to
+  the extent of its terms that pass both tests.
 - A relying party **MUST NOT** treat `E_base` as sybil-resistant in the sense the impossibility result
   concerns. It is evidence weighed against the observer's method, not a conclusion inherited.
-- A deployment implementing GOODHART-004 **SHOULD** state the peer-signal weight it applies, since the
-  strength of the above depends on it. At the upper bound of the stated range, combined with the 10%
-  sponsor term, up to 30% of `E_base` is relational rather than self-earned.
 
-Two questions follow that belong to the specification rather than to this profile, and are put to its
-author in Section 9. The Section 5.1 formula sums to 1.00 with no term for peer signals, so where the
-Section 5.5.5 contribution is seated is not evident. And "sponsor reputation" appears both as a peer
-signal in 5.5.5 and as the separate 10% Sponsor Weight in 5.1.
+Where a deployment declares no peer-signal weight and no sponsorship terminator, the relational portion
+of `E_base` is bounded above by the 20% upper end of the Section 5.5.5 range plus the 10% sponsor term:
+**up to 30%**. That bound is what a relying party must assume in the absence of the declarations this
+section requires, and is the reason they are required.
+
+## The composition is being revised
+
+This subsection is **non-normative**. Nothing in it changes the pin in Section 2.1 or the requirements
+above, which are stated against {{KTP-CORE}} as published at `v1.0.1-provenance`.
+
+Four defects in published Section 5.1 are agreed with its author, and will be corrected in a subsequent
+KTP release rather than by amendment under the existing tag:
+
+1. **The lineage term contradicts itself.** The prose treats generation as a ceiling on `E_base` — 40
+   Tethered, 70 Divergent, unbounded Persistent. The formula uses `Lineage_cap = min(generation * 15,
+   100)` as an *additive* term at 20%. The values do not correspond, and "unbounded" contradicts the
+   `min`. Resolution: the ceiling reading governs and the additive term is removed. Maturity buys
+   headroom rather than points — an agent gains permission to accumulate standing, not standing for
+   having advanced.
+2. **The sponsorship term disappears silently.** The 10% weight applies "For Tethered agents"; past
+   generation 2 it is zero, the weights sum to 0.90, and nothing states what becomes of the remainder.
+   Read literally, a Persistent agent cannot exceed 90 — which puts God Mode ({{KTP-ENFORCE}} Section
+   5.1.1, `E_trust >= 95`) permanently beyond the most mature class in the model, and makes
+   {{KTP-ENFORCE}} Section 9.5's own worked example at `E_base = 98`, together with its `E_base > 95`
+   taxation branch, unreachable.
+3. **Peer signals have no seat.** Resolved as required above: a distinct, declared term.
+4. **Sponsor reputation is counted twice.** Resolved as required above: removed from the peer-signal
+   set.
+
+The correction to (2) is the one that matters most to this profile. The sponsorship bond does not
+vanish at release; it **converts**. While tethered, a sponsor stakes standing it can lose against the
+agent's future conduct. At release that stake ends — a graduated agent should not hold its sponsor
+hostage indefinitely — and what replaces it is a *current* attestation from an externally accountable
+party: exposed to loss, revocable, and liable for the accuracy of the claim rather than for whatever the
+agent does next.
+
+The completed-tether record becomes provenance. It is not the anchor. A clean handshake from years ago
+says nothing about who is accountable now, and a credential true at issuance presented as current
+standing is precisely the failure this profile guards against elsewhere.
+
+When that release lands, the required declarations above become computable rather than bounded, and the
+30% fallback bound ceases to apply. Whether the resulting anchor term is emittable as `earned_standing`
+is an open question — see Section 4.1.1 and Section 9.
 
 ## Newcomer distrust
 
@@ -324,45 +467,69 @@ compromise as within their threat model and **SHOULD NOT** rely on a single orac
 issuance and chain attestation.
 
 **Reference stability.** This profile depends on a specification outside any standards body's change
-control. A KTP revision may alter the structures profiled here without notice. Implementations
-**SHOULD** pin the KTP revision they were built against and **MUST NOT** assume this profile remains
-accurate across KTP versions. See Section 9.
+control, and KTP carries no formal interface-stability promise. What it does carry is a published release
+policy {{KTP-VERSIONING}}: tags are never moved or deleted, and retractions are issued as new releases
+rather than as deletions. That makes a pinned reference durable without making the interface stable.
+
+Implementations **MUST** pin as Section 2.1 requires and **MUST NOT** assume this profile remains
+accurate across KTP versions. The revision described in Section 4.4 is a live example: it changes three
+of the four terms of the composition Section 4.3 reasons about, and an implementation that resolved these
+references against `main` rather than `v1.0.1-provenance` would silently acquire it.
+
+**Declarations are load-bearing, and their absence is not benign.** Section 4.3 requires a deployment to
+declare its peer-signal weight and its sponsorship terminator. A deployment that omits them does not
+thereby become safe — it becomes unassessable, and a relying party **MUST** fall back to the 30% bound
+rather than assume the omitted terms are zero. Implementations **SHOULD** treat a Trust Proof carrying
+no declared peer-signal weight as materially weaker evidence than one carrying a declared weight of 20%.
+
+**Attestation rings.** The terminator test in Section 4.3 exists because external accountability is
+locally checkable and globally forgeable. Each link in a ring of mutually attesting agents can present a
+named, loss-exposed, revocable attestor, and a verifier checking only the immediate attestor will pass
+every one of them. A verifier **MUST** follow the accountability chain to its declared terminator, and
+**MUST** reject a chain that exceeds the deployment's declared hop bound or that revisits a party.
 
 # Attribution and IPR
 
-The Kinetic Trust Protocol is the work of **Chris Perkins**, New Mexico Cyber Intelligence & Threat
-Response Alliance, published under the Apache License, Version 2.0 at
+This document binds two independently authored bodies of work, and is co-authored across the seam.
+
+The **Kinetic Trust Protocol** is the work of **Chris Perkins** and **Mike Storm**, published by the New
+Mexico Cyber Intelligence & Threat Response Alliance under the Apache License, Version 2.0 at
 `https://nmcitra.github.io/ktp-rfc/`.
 
-This document profiles that work. It claims no authorship of it, and nothing here should be read as
-specifying, extending, or revising KTP itself.
+The companion specifications this profile binds KTP to —
+{{I-D.martherus-authority-attenuation}} and {{I-D.martherus-trust-observation}} — are the work of
+**Robin Martherus** under Tamed Autonomy.
 
-KTP is shared here with attribution by mutual agreement between its author and the author of this
-document. Apache 2.0 governs the specification itself; this profile adds nothing to and subtracts nothing
-from those terms.
+Neither party claims authorship of the other's work, and nothing here should be read as specifying,
+extending, or revising KTP itself. The readings of KTP in Sections 3 and 4 were arrived at by
+implementing against the specification and are endorsed by its author; the corrections recorded in
+Section 4.4 arose from that reading and are agreed, but they are changes to KTP that KTP will make, not
+changes this document makes.
 
-**What remains outstanding is technical, not permissive.** Section 4.4 argues that the sybilproofness
-result does not apply to `E_base`, and that argument rests on how KTP derives the resilience component —
-a fact about KTP that only its author can settle. If it is wrong, Section 4.4 and the `earned_standing`
-mapping in Section 4.1 are both wrong with it. See Open Item 2.
-
-Co-authorship of this profile, or contribution of it to the KTP document set directly, remain open and
-would both be preferable to independent publication. Neither is a precondition for it existing.
+Apache 2.0 governs the KTP specification itself. This profile adds nothing to and subtracts nothing from
+those terms.
 
 # Open Items
 
-1. **Where is the Section 5.5.5 peer-signal contribution seated?** {{KTP-CORE}} Section 5.1's formula
-   sums to 1.00 across proof of resilience, lineage and sponsor weight, with no term for peer signals.
-   Section 5.5.5 states that peer signals SHOULD contribute 10-20% of `E_base`. Does that displace the
-   three stated weights, or extend beyond them? Section 4.4's bound depends on the answer.
-2. **Is sponsor reputation counted twice?** It appears as a peer signal in {{KTP-CORE}} Section 5.5.5 and
-   as the separate 10% Sponsor Weight in Section 5.1.
-3. **Determine the normative reference status KTP can actually carry.** As a specification published
+1. **Determine the normative reference status KTP can actually carry.** As a specification published
    outside a recognized standards body, it may constitute a downward reference requiring justification.
-   That question belongs to this document alone — which is why this document exists.
-4. **Confirm KTP's versioning and change-control practice** before asserting the pinning guidance in
-   Section 7.
-5. Decide whether tier thresholds should be restated here. {{KTP-ENFORCE}} publishes them and
+   That question belongs to this document alone — which is why this document exists. A narrow draft is
+   being prepared covering the ground this profile depends on: the definition of `E_base`, the
+   portability boundary, the declaration requirements, the comparability rule, and the sybilproofness
+   posture stated by KTP's author rather than inferred here. If filed, the references in Section 2 become
+   a Datatracker citation rather than a repository URL. It is a citation upgrade, not a dependency, and
+   does not gate this document.
+2. **Whether the anchor term can be carried as `earned_standing`.** Section 4.1.1 states the problem:
+   `earned_standing` is defined as a measurement of what the subject did or endured, and an accountability
+   attestation is not that. Under the revised composition of Section 4.4 the accountability-derived
+   portion is no longer small. Three positions are possible — widen `earned_standing`, split the mapping
+   so the anchor travels as `attestation_result`, or define a new observation type for current
+   accountability. The third is the most honest and the most expensive.
+3. **Whether the sponsorship hop bound should be a fixed number rather than a declared one.** Section 4.3
+   requires a deployment to declare its terminator and hop count. A declared bound is checkable but
+   permits a deployment to declare a useless one; a fixed bound is stronger but is a number this profile
+   cannot justify from either specification.
+4. Decide whether tier thresholds should be restated here. {{KTP-ENFORCE}} publishes them and
    {{KTP-CORE}} does not; restating them would duplicate a value that may change.
 
 # IANA Considerations
