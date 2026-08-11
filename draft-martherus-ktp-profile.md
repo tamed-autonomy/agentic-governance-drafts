@@ -207,8 +207,8 @@ quantities that behave differently, and a profile that treats it as one artifact
 wrong.
 
 `E_trust = E_base × (1 - R)`. `E_base` is standing the agent has accumulated — resilience history,
-lineage maturity, and a bounded sponsor contribution. `R` is a risk factor derived from the Context
-Tensor: the environment at that enforcement point, at that instant.
+lineage maturity, and a bounded sponsor contribution. `R` is a risk factor derived from the evaluating
+party's environmental conditions: the environment at that enforcement point, at that instant.
 
 **`E_base` is portable. `E_trust` is not.**
 
@@ -272,9 +272,9 @@ density, link saturation, adversarial pressure, and audit posture, silently subs
 conditions actually in force where the action is about to happen. That is a category error regardless of
 how much the oracle is trusted.
 
-`E_trust` is computed locally, from a portable `E_base` and the evaluating party's own Context Tensor.
-That is precisely the division {{I-D.martherus-trust-observation}} Section 6.3 requires: evidence
-travels, judgment stays local.
+`E_trust` is computed locally, from a portable `E_base` and the evaluating party's own environmental
+conditions. That is precisely the division {{I-D.martherus-trust-observation}} Section 6.3 requires:
+evidence travels, judgment stays local.
 
 ## The sybilproofness result and `E_base`
 
